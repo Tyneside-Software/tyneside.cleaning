@@ -1,0 +1,579 @@
+/* Per-site skins — same layout, different personality */
+
+/* ========== SOFTWARE — product / engineering ========== */
+.theme-software {
+  color-scheme: dark;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #0b1220;
+  --bg-fx: radial-gradient(900px 480px at 15% -10%, rgba(59, 130, 246, 0.18), transparent 55%),
+    radial-gradient(700px 400px at 100% 0%, rgba(14, 165, 233, 0.1), transparent 45%);
+  --text: #e8eef8;
+  --muted: #93a4bd;
+  --heading: #f0f6ff;
+  --brand: #f8fafc;
+  --brand-muted: #60a5fa;
+  --brand-tracking: 0.01em;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+  --link: #7dd3fc;
+  --link-hover: #bae6fd;
+  --label: #60a5fa;
+  --border: #243247;
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-lg: 14px;
+
+  --nav-bg: rgba(11, 18, 32, 0.9);
+  --nav-border: 1px solid #1e2d45;
+  --nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+  --nav-blur: blur(10px);
+
+  --btn-border: 1px solid #3b82f6;
+  --btn-color: #dbeafe;
+  --btn-bg: transparent;
+  --btn-bg-hover: rgba(59, 130, 246, 0.15);
+  --btn-color-hover: #fff;
+  --btn-shadow: none;
+  --btn-fill-border: 1px solid #2563eb;
+  --btn-fill-color: #fff;
+  --btn-fill-bg: #2563eb;
+  --btn-fill-bg-hover: #3b82f6;
+  --btn-fill-color-hover: #fff;
+  --btn-fill-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+  --btn-sec-border: 1px solid #475569;
+  --btn-sec-color: #e2e8f0;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: rgba(148, 163, 184, 0.12);
+  --btn-sec-color-hover: #fff;
+
+  --hero-bg: linear-gradient(160deg, #0f1b33 0%, #0b1220 55%, #0a1628 100%);
+  --hero-border: 1px solid #1e2d45;
+  --hero-text: #e8eef8;
+  --hero-kicker: #60a5fa;
+  --hero-title: #f8fafc;
+  --hero-tag: #93c5fd;
+  --hero-lead: #94a3b8;
+  --hero-meta: #64748b;
+  --hero-title-tracking: -0.03em;
+
+  --section-alt-bg: rgba(15, 27, 51, 0.65);
+  --section-alt-border: 1px solid #1e2d45;
+  --cta-bg: linear-gradient(180deg, #13233f, #0b1220);
+  --cta-border: 1px solid #1e3a5f;
+  --cta-text: #e8eef8;
+  --cta-heading: #f8fafc;
+  --cta-muted: #94a3b8;
+
+  --panel-bg: #111b2e;
+  --panel-border: 1px solid #243247;
+  --panel-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  --panel-heading: #93c5fd;
+  --panel-text: #94a3b8;
+  --panel-active-bg: #172554;
+  --panel-active-border: 1px solid #3b82f6;
+  --panel-active-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25), 0 12px 32px rgba(0, 0, 0, 0.3);
+  --panel-active-heading: #bfdbfe;
+  --panel-active-text: #e2e8f0;
+
+  --chip-bg: #111b2e;
+  --chip-border: 1px solid #243247;
+  --chip-text: #e2e8f0;
+  --chip-bullet: "▹ ";
+
+  --quote-bg: #111b2e;
+  --quote-border: 1px solid #334155;
+  --quote-shadow: none;
+  --quote-text: #cbd5e1;
+  --quote-cite: #60a5fa;
+
+  --step-bg: #111b2e;
+  --step-border: 1px solid #243247;
+  --step-n-bg: #1e3a5f;
+  --step-n-border: 1px solid #3b82f6;
+  --step-n-color: #93c5fd;
+
+  --footer-bg: #070d18;
+  --footer-border: 1px solid #1e2d45;
+  --footer-text: #64748b;
+  --footer-link: #94a3b8;
+  --footer-link-active: #93c5fd;
+  --footer-link-bg: rgba(59, 130, 246, 0.12);
+}
+
+/* ========== CLEANING — fresh / light / airy ========== */
+.theme-cleaning {
+  color-scheme: light;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #f4fbf9;
+  --bg-fx: radial-gradient(800px 420px at 0% 0%, rgba(13, 148, 136, 0.12), transparent 50%),
+    radial-gradient(600px 360px at 100% 10%, rgba(45, 212, 191, 0.1), transparent 45%);
+  --text: #134e4a;
+  --muted: #5b7c78;
+  --heading: #0f3d3a;
+  --brand: #0f766e;
+  --brand-muted: #14b8a6;
+  --accent: #0d9488;
+  --accent-soft: rgba(13, 148, 136, 0.1);
+  --link: #0f766e;
+  --link-hover: #115e59;
+  --label: #0d9488;
+  --border: #cce8e3;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-lg: 20px;
+
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-border: 1px solid #d8efe9;
+  --nav-shadow: 0 4px 20px rgba(15, 118, 110, 0.06);
+  --nav-blur: blur(10px);
+  --logo-filter: none;
+
+  --btn-border: 1px solid #99d5cc;
+  --btn-color: #0f766e;
+  --btn-bg: #fff;
+  --btn-bg-hover: #ecfdf8;
+  --btn-color-hover: #115e59;
+  --btn-shadow: 0 2px 8px rgba(15, 118, 110, 0.08);
+  --btn-fill-border: 1px solid #0d9488;
+  --btn-fill-color: #fff;
+  --btn-fill-bg: #0d9488;
+  --btn-fill-bg-hover: #0f766e;
+  --btn-fill-color-hover: #fff;
+  --btn-fill-shadow: 0 8px 22px rgba(13, 148, 136, 0.28);
+  --btn-sec-border: 1px solid #99d5cc;
+  --btn-sec-color: #0f766e;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: #ecfdf8;
+  --btn-sec-color-hover: #115e59;
+
+  --hero-bg: linear-gradient(165deg, #ffffff 0%, #e8faf6 55%, #d9f5ef 100%);
+  --hero-border: 1px solid #cce8e3;
+  --hero-text: #134e4a;
+  --hero-kicker: #0d9488;
+  --hero-title: #0f3d3a;
+  --hero-tag: #0f766e;
+  --hero-lead: #5b7c78;
+  --hero-meta: #7a9b96;
+  --hero-title-tracking: -0.02em;
+
+  --section-alt-bg: #eef9f6;
+  --section-alt-border: 1px solid #d8efe9;
+  --cta-bg: linear-gradient(180deg, #0f766e, #0d9488);
+  --cta-text: #ecfdf8;
+  --cta-heading: #fff;
+  --cta-muted: rgba(236, 253, 248, 0.88);
+
+  --panel-bg: #ffffff;
+  --panel-border: 1px solid #d8efe9;
+  --panel-shadow: 0 10px 30px rgba(15, 118, 110, 0.07);
+  --panel-heading: #0f766e;
+  --panel-text: #5b7c78;
+  --panel-active-bg: #0f766e;
+  --panel-active-border: 1px solid #0f766e;
+  --panel-active-shadow: 0 12px 32px rgba(15, 118, 110, 0.25);
+  --panel-active-heading: #fff;
+  --panel-active-text: #ccfbf1;
+
+  --chip-bg: #fff;
+  --chip-border: 1px solid #d8efe9;
+  --chip-text: #134e4a;
+  --chip-bullet: "✓ ";
+  --chip-shadow: 0 2px 8px rgba(15, 118, 110, 0.05);
+
+  --quote-bg: #fff;
+  --quote-border: 1px solid #d8efe9;
+  --quote-shadow: 0 8px 24px rgba(15, 118, 110, 0.06);
+  --quote-text: #3d5c58;
+  --quote-cite: #0d9488;
+
+  --step-bg: #fff;
+  --step-border: 1px solid #d8efe9;
+  --step-n-bg: #ccfbf1;
+  --step-n-border: 1px solid #5eead4;
+  --step-n-color: #0f766e;
+
+  --footer-bg: #0f3d3a;
+  --footer-border: none;
+  --footer-text: #99c2bc;
+  --footer-link: #99c2bc;
+  --footer-link-active: #5eead4;
+  --footer-link-bg: rgba(94, 234, 212, 0.12);
+}
+
+/* ========== CHARITY — warm / human / soft ========== */
+.theme-charity {
+  color-scheme: light;
+  --font: Georgia, "Times New Roman", serif;
+  --bg: #fff8f3;
+  --bg-fx: radial-gradient(700px 400px at 10% 0%, rgba(251, 113, 133, 0.12), transparent 50%),
+    radial-gradient(600px 360px at 100% 0%, rgba(251, 191, 36, 0.1), transparent 45%);
+  --text: #3f2a2a;
+  --muted: #7a5c5c;
+  --heading: #5c2a2a;
+  --brand: #9f1239;
+  --brand-muted: #e11d48;
+  --accent: #e11d48;
+  --accent-soft: rgba(225, 29, 72, 0.08);
+  --link: #be123c;
+  --link-hover: #9f1239;
+  --label: #e11d48;
+  --border: #f3d4d0;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-lg: 22px;
+
+  --nav-bg: rgba(255, 252, 249, 0.95);
+  --nav-border: 1px solid #f3d4d0;
+  --nav-shadow: 0 4px 18px rgba(159, 18, 57, 0.06);
+  --nav-blur: blur(8px);
+
+  --btn-border: 1px solid #f0b4b4;
+  --btn-color: #9f1239;
+  --btn-bg: #fff;
+  --btn-bg-hover: #fff1f2;
+  --btn-color-hover: #881337;
+  --btn-shadow: 0 2px 10px rgba(159, 18, 57, 0.06);
+  --btn-fill-border: 1px solid #e11d48;
+  --btn-fill-color: #fff;
+  --btn-fill-bg: #e11d48;
+  --btn-fill-bg-hover: #be123c;
+  --btn-fill-color-hover: #fff;
+  --btn-fill-shadow: 0 8px 24px rgba(225, 29, 72, 0.25);
+  --btn-sec-border: 1px solid #f0b4b4;
+  --btn-sec-color: #9f1239;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: #fff1f2;
+  --btn-sec-color-hover: #881337;
+
+  --hero-bg: linear-gradient(165deg, #fffefb 0%, #fff1f2 50%, #ffe4e6 100%);
+  --hero-border: 1px solid #f3d4d0;
+  --hero-text: #3f2a2a;
+  --hero-kicker: #e11d48;
+  --hero-title: #881337;
+  --hero-tag: #9f1239;
+  --hero-lead: #7a5c5c;
+  --hero-meta: #a88;
+  --hero-title-tracking: -0.01em;
+
+  --section-alt-bg: #fff1ee;
+  --section-alt-border: 1px solid #f3d4d0;
+  --cta-bg: linear-gradient(180deg, #9f1239, #e11d48);
+  --cta-text: #fff5f5;
+  --cta-heading: #fff;
+  --cta-muted: rgba(255, 245, 245, 0.9);
+
+  --panel-bg: #fffefb;
+  --panel-border: 1px solid #f3d4d0;
+  --panel-shadow: 0 10px 28px rgba(159, 18, 57, 0.07);
+  --panel-heading: #9f1239;
+  --panel-text: #7a5c5c;
+  --panel-active-bg: #9f1239;
+  --panel-active-border: 1px solid #9f1239;
+  --panel-active-shadow: 0 12px 30px rgba(159, 18, 57, 0.22);
+  --panel-active-heading: #fff;
+  --panel-active-text: #fecdd3;
+
+  --chip-bg: #fffefb;
+  --chip-border: 1px solid #f3d4d0;
+  --chip-text: #3f2a2a;
+  --chip-bullet: "♥ ";
+
+  --quote-bg: #fffefb;
+  --quote-border: 1px solid #f3d4d0;
+  --quote-shadow: 0 8px 22px rgba(159, 18, 57, 0.06);
+  --quote-text: #5c3a3a;
+  --quote-cite: #e11d48;
+
+  --step-bg: #fffefb;
+  --step-border: 1px solid #f3d4d0;
+  --step-n-bg: #ffe4e6;
+  --step-n-border: 1px solid #fda4af;
+  --step-n-color: #9f1239;
+
+  --footer-bg: #4c0519;
+  --footer-border: none;
+  --footer-text: #e7b0bc;
+  --footer-link: #e7b0bc;
+  --footer-link-active: #fecdd3;
+  --footer-link-bg: rgba(254, 205, 211, 0.12);
+}
+
+.theme-charity .brand-word,
+.theme-charity .brand-sub,
+.theme-charity .btn,
+.theme-charity .nav-links,
+.theme-charity .hero-kicker,
+.theme-charity .list-features,
+.theme-charity .list-neon,
+.theme-charity .steps .n,
+.theme-charity .footer-brands,
+.theme-charity .pixel-label {
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* ========== GROUP — parent brand / confident slate + gold ========== */
+.theme-group {
+  color-scheme: dark;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #141210;
+  --bg-fx: radial-gradient(800px 420px at 20% -5%, rgba(217, 119, 6, 0.12), transparent 50%),
+    radial-gradient(600px 360px at 100% 0%, rgba(245, 158, 11, 0.06), transparent 45%);
+  --text: #f5f0e8;
+  --muted: #a89f92;
+  --heading: #faf6f0;
+  --brand: #faf6f0;
+  --brand-muted: #d97706;
+  --accent: #d97706;
+  --accent-soft: rgba(217, 119, 6, 0.12);
+  --link: #fbbf24;
+  --link-hover: #fcd34d;
+  --label: #d97706;
+  --border: #2e2924;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+
+  --nav-bg: rgba(20, 18, 16, 0.94);
+  --nav-border: 1px solid #2e2924;
+  --nav-shadow: 0 1px 0 rgba(251, 191, 36, 0.06);
+  --nav-blur: blur(10px);
+
+  --btn-border: 1px solid #a16207;
+  --btn-color: #fde68a;
+  --btn-bg: transparent;
+  --btn-bg-hover: rgba(217, 119, 6, 0.15);
+  --btn-color-hover: #fff;
+  --btn-shadow: none;
+  --btn-fill-border: 1px solid #d97706;
+  --btn-fill-color: #1c1917;
+  --btn-fill-bg: #f59e0b;
+  --btn-fill-bg-hover: #fbbf24;
+  --btn-fill-color-hover: #1c1917;
+  --btn-fill-shadow: 0 8px 24px rgba(245, 158, 11, 0.28);
+  --btn-sec-border: 1px solid #57534e;
+  --btn-sec-color: #e7e5e4;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: rgba(168, 162, 158, 0.12);
+  --btn-sec-color-hover: #fff;
+
+  --hero-bg: linear-gradient(165deg, #1c1917 0%, #141210 50%, #1a1510 100%);
+  --hero-border: 1px solid #2e2924;
+  --hero-text: #f5f0e8;
+  --hero-kicker: #f59e0b;
+  --hero-title: #faf6f0;
+  --hero-tag: #fbbf24;
+  --hero-lead: #a89f92;
+  --hero-meta: #78716c;
+  --hero-title-tracking: -0.02em;
+
+  --section-alt-bg: rgba(28, 25, 23, 0.8);
+  --section-alt-border: 1px solid #2e2924;
+  --cta-bg: linear-gradient(180deg, #292524, #1c1917);
+  --cta-border: 1px solid #44403c;
+  --cta-text: #f5f0e8;
+  --cta-heading: #faf6f0;
+  --cta-muted: #a89f92;
+
+  --panel-bg: #1c1917;
+  --panel-border: 1px solid #2e2924;
+  --panel-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+  --panel-heading: #fbbf24;
+  --panel-text: #a89f92;
+  --panel-active-bg: #292524;
+  --panel-active-border: 1px solid #d97706;
+  --panel-active-shadow: 0 0 0 1px rgba(217, 119, 6, 0.2), 0 12px 32px rgba(0, 0, 0, 0.35);
+  --panel-active-heading: #fde68a;
+  --panel-active-text: #e7e5e4;
+
+  --chip-bg: #1c1917;
+  --chip-border: 1px solid #2e2924;
+  --chip-text: #e7e5e4;
+  --chip-bullet: "◆ ";
+
+  --quote-bg: #1c1917;
+  --quote-border: 1px solid #44403c;
+  --quote-shadow: none;
+  --quote-text: #d6d3d1;
+  --quote-cite: #f59e0b;
+
+  --step-bg: #1c1917;
+  --step-border: 1px solid #2e2924;
+  --step-n-bg: #44403c;
+  --step-n-border: 1px solid #d97706;
+  --step-n-color: #fbbf24;
+
+  --footer-bg: #0c0a09;
+  --footer-border: 1px solid #2e2924;
+  --footer-text: #78716c;
+  --footer-link: #a8a29e;
+  --footer-link-active: #fbbf24;
+  --footer-link-bg: rgba(217, 119, 6, 0.12);
+}
+
+/* ========== GAMES — neon arcade (snake + geometry dash) ========== */
+.theme-games {
+  color-scheme: dark;
+  --font: "Courier New", Courier, ui-monospace, monospace;
+  --bg: #050510;
+  --bg-fx: radial-gradient(900px 500px at 10% -10%, rgba(255, 0, 255, 0.14), transparent 55%),
+    radial-gradient(800px 480px at 100% 0%, rgba(0, 255, 255, 0.08), transparent 50%),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.08) 2px, rgba(0, 0, 0, 0.08) 4px);
+  --bg-fx-opacity: 1;
+  --text: #e8fff0;
+  --muted: #7a9a8a;
+  --heading: #00ff66;
+  --brand: #00ff66;
+  --brand-muted: #ff00ff;
+  --brand-tracking: 0.08em;
+  --accent: #00ffff;
+  --accent-soft: rgba(0, 255, 255, 0.1);
+  --link: #00ffff;
+  --link-hover: #ff00ff;
+  --label: #ff00ff;
+  --border: rgba(0, 255, 102, 0.35);
+  --radius: 0;
+  --radius-sm: 0;
+  --radius-lg: 0;
+  --btn-tracking: 0.06em;
+  --btn-transform: uppercase;
+  --h2-tracking: 0.08em;
+  --h2-transform: uppercase;
+  --panel-h-transform: uppercase;
+  --hero-title-tracking: 0.06em;
+
+  --nav-bg: rgba(5, 5, 16, 0.92);
+  --nav-border: 3px solid #00ff66;
+  --nav-shadow: 0 0 24px rgba(0, 255, 102, 0.25);
+  --nav-blur: blur(6px);
+  --logo-filter: drop-shadow(0 0 6px #ff00ff);
+
+  --btn-border: 3px solid #00ffff;
+  --btn-color: #00ffff;
+  --btn-bg: transparent;
+  --btn-bg-hover: #00ffff;
+  --btn-color-hover: #050510;
+  --btn-shadow: 0 0 12px #00ffff;
+  --btn-fill-border: 3px solid #00ff66;
+  --btn-fill-color: #050510;
+  --btn-fill-bg: #00ff66;
+  --btn-fill-bg-hover: #ffe600;
+  --btn-fill-color-hover: #050510;
+  --btn-fill-border-hover: #ffe600;
+  --btn-fill-shadow: 0 0 12px #00ff66;
+  --btn-sec-border: 3px solid #ff00ff;
+  --btn-sec-color: #ff00ff;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: #ff00ff;
+  --btn-sec-color-hover: #050510;
+  --btn-sec-shadow: 0 0 12px #ff00ff;
+
+  --hero-bg: linear-gradient(180deg, rgba(10, 0, 30, 0.55), rgba(5, 5, 16, 0.9));
+  --hero-border: 3px solid #ff00ff;
+  --hero-shadow: 0 0 40px rgba(255, 0, 255, 0.2);
+  --hero-text: #e8fff0;
+  --hero-kicker: #ffe600;
+  --hero-title: #ff00ff;
+  --hero-title-shadow: 0 0 12px #ff00ff, 0 0 28px rgba(255, 0, 255, 0.4);
+  --hero-tag: #00ffff;
+  --hero-lead: #7a9a8a;
+  --hero-meta: #7a9a8a;
+
+  --section-alt-bg: rgba(0, 0, 0, 0.35);
+  --section-alt-border: 1px solid rgba(0, 255, 255, 0.12);
+  --cta-bg: linear-gradient(180deg, #0a0018, #1a0033 60%, #050510);
+  --cta-border: 3px solid #00ffff;
+  --cta-shadow: 0 -8px 40px rgba(0, 255, 255, 0.15);
+  --cta-text: #e8fff0;
+  --cta-heading: #00ffff;
+  --cta-muted: #7a9a8a;
+
+  --panel-bg: #0a0a18;
+  --panel-border: 3px solid #00ff66;
+  --panel-shadow: 0 0 12px #00ff66, inset 0 0 40px rgba(0, 255, 102, 0.04);
+  --panel-heading: #00ffff;
+  --panel-text: #7a9a8a;
+  --panel-hover-shadow: 0 0 16px #00ffff;
+  --panel-active-bg: #100018;
+  --panel-active-border: 3px solid #ffe600;
+  --panel-active-shadow: 0 0 20px #ffe600;
+  --panel-active-heading: #ffe600;
+  --panel-active-text: #e8fff0;
+
+  --chip-bg: rgba(0, 0, 0, 0.4);
+  --chip-border: 2px solid rgba(0, 255, 102, 0.35);
+  --chip-text: #e8fff0;
+  --chip-bullet: "▶ ";
+  --chip-shadow: 0 0 10px rgba(0, 255, 102, 0.12);
+
+  --quote-bg: rgba(10, 0, 30, 0.85);
+  --quote-border: 3px solid #ff00ff;
+  --quote-shadow: 0 0 12px #ff00ff;
+  --quote-text: #e8fff0;
+  --quote-cite: #00ffff;
+
+  --step-bg: rgba(0, 0, 0, 0.45);
+  --step-border: 2px solid rgba(0, 255, 255, 0.3);
+  --step-shadow: 0 0 12px rgba(0, 255, 255, 0.1);
+  --step-n-bg: transparent;
+  --step-n-border: 2px solid #ff00ff;
+  --step-n-color: #ff00ff;
+
+  --footer-bg: #020208;
+  --footer-border: 3px solid #00ff66;
+  --footer-shadow: 0 0 30px rgba(0, 255, 102, 0.12);
+  --footer-text: #7a9a8a;
+  --footer-link: #7a9a8a;
+  --footer-link-active: #00ff66;
+  --footer-link-bg: transparent;
+}
+
+.theme-games .brand-word {
+  text-shadow: 0 0 12px #00ff66;
+}
+.theme-games .brand-sub {
+  text-shadow: 0 0 12px #ff00ff;
+}
+.theme-games .section h2 {
+  text-shadow: 0 0 12px #00ff66;
+}
+.theme-games .section-cta h2 {
+  text-shadow: 0 0 12px #00ffff;
+}
+.theme-games .blink {
+  animation: arcade-blink 1.2s step-end infinite;
+}
+@keyframes arcade-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* panel colour variants used in family cards */
+.theme-software .panel-m,
+.theme-software .panel-c {
+  border-color: #334155;
+}
+.theme-cleaning .panel-m {
+  border-color: #99d5cc;
+}
+.theme-cleaning .panel-c {
+  border-color: #5eead4;
+}
+.theme-charity .panel-m {
+  border-color: #fda4af;
+}
+.theme-charity .panel-c {
+  border-color: #f0b4b4;
+}
+.theme-group .panel-m,
+.theme-group .panel-c {
+  border-color: #44403c;
+}
+.theme-games .panel-m {
+  border-color: #ff00ff;
+  box-shadow: 0 0 12px #ff00ff, inset 0 0 40px rgba(255, 0, 255, 0.05);
+}
+.theme-games .panel-c {
+  border-color: #00ffff;
+  box-shadow: 0 0 12px #00ffff, inset 0 0 40px rgba(0, 255, 255, 0.04);
+}

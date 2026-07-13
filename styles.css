@@ -1,2 +1,3 @@
-/* Legacy fallback — brand sites use arcade.css */
-@import url("arcade.css");
+/* Legacy entry — brand sites load layout.css + themes.css */
+@import url("layout.css");
+@import url("themes.css");
