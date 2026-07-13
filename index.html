@@ -1,46 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tyneside Cleaning</title>
-  <meta name="description" content="Professional cleaning services across Tyneside.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyneside Cleaning • Local cleaners, real support</title>
+  <meta name="description" content="Supporting North East cleaning entrepreneurs with free software, websites, and paid work through community programmes.">
   <link rel="canonical" href="https://tyneside.cleaning/">
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tyne: {
+              DEFAULT: '#0A2540',
+              deep: '#071a2e',
+              soft: '#143454',
+            },
+            amber: {
+              brand: '#F59E0B',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          borderRadius: {
+            '3xl': '1.5rem',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .tyne-blue { color: #0A2540; }
+    .hero {
+      background:
+        linear-gradient(rgba(10, 37, 64, 0.92), rgba(10, 37, 64, 0.96)),
+        url('https://picsum.photos/id/1015/2000/1200');
+      background-size: cover;
+      background-position: center;
+    }
+    a.no-underline { text-decoration: none; }
+  </style>
 </head>
-<body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="/">Tyneside Cleaning</a>
-      <nav aria-label="Primary">
-        <a href="/">Home</a>
-      </nav>
+<body class="bg-zinc-50 text-zinc-900 antialiased">
+
+<nav class="bg-white border-b border-zinc-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 sm:py-5 flex justify-between items-center gap-4">
+    <a href="/" class="flex items-center gap-3 min-w-0 no-underline">
+      <img src="/logo.svg" alt="Tyneside Cleaning" class="h-10 sm:h-12 w-auto shrink-0">
+      <span class="text-2xl sm:text-3xl font-bold tracking-tighter tyne-blue">TYNESIDE</span>
+      <span class="text-lg sm:text-2xl font-medium text-zinc-400 hidden sm:inline tracking-tight">CLEANING</span>
+    </a>
+    <div class="flex items-center gap-3 sm:gap-6">
+      <div class="hidden md:flex items-center gap-5 text-sm font-medium text-zinc-500">
+            <a href="https://tyneside.software/" class="hover:text-tyne transition no-underline">Software</a>
+            <a href="https://tyneside.charity/" class="hover:text-tyne transition no-underline">Charity</a>
+            <a href="https://tyneside.group/" class="hover:text-tyne transition no-underline">Group</a>
+      </div>
+      <a href="mailto:hello@tyneside.cleaning"
+         class="shrink-0 bg-tyne text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-sm sm:text-base font-semibold hover:bg-amber-600 transition no-underline">
+        Get in touch
+      </a>
+    </div>
+  </div>
+</nav>
+  <header class="hero text-white py-24 sm:py-28 text-center">
+    <div class="max-w-4xl mx-auto px-6">
+      <p class="text-sm uppercase tracking-[0.2em] text-amber-brand font-semibold mb-4">Tyneside Cleaning</p>
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter">TYNESIDE CLEANING</h1>
+      <p class="mt-4 text-2xl sm:text-3xl font-light">
+        Local cleaners.<br>
+        Real support.<br>
+        Professional results.
+      </p>
+      <p class="mt-10 text-lg sm:text-xl max-w-2xl mx-auto text-zinc-200">
+        We’re backing North East cleaning entrepreneurs with free software, proper websites,
+        and paid work through community programmes — starting with people we already trust.
+      </p>
+      <div class="mt-12 flex flex-wrap justify-center gap-4">
+        <a href="#for-cleaners"
+           class="bg-white text-tyne px-8 sm:px-10 py-4 sm:py-5 rounded-3xl font-semibold text-lg sm:text-xl hover:scale-105 transition no-underline">
+          For cleaners →
+        </a>
+        <a href="#contact"
+           class="border border-white/40 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-3xl font-semibold text-lg sm:text-xl hover:bg-white/10 transition no-underline">
+          Book or enquire
+        </a>
+      </div>
     </div>
   </header>
 
-  <main class="wrap">
-  <article class="page">
-    <h1>Tyneside Cleaning</h1>
-      <div class="prose">
-        <p>Reliable commercial and domestic cleaning across Tyneside.</p>
-<h2>Services</h2>
-<ul>
-<li>Office and commercial cleaning</li>
-<li>Domestic cleans</li>
-<li>Flexible schedules to suit your premises</li>
-</ul>
-<p>This site is generated from the shared <strong>site-generator</strong> and published via GitHub Pages.</p>
+  <section class="py-20 bg-white" id="for-cleaners">
+    <div class="max-w-4xl mx-auto px-6">
+      <h2 class="text-3xl sm:text-4xl font-bold tyne-blue text-center mb-6">Built with cleaners, not at them</h2>
+      <p class="text-lg text-zinc-600 text-center max-w-3xl mx-auto mb-12">
+        The first real customer is Joanne’s cleaning business. Free software, a website we’re building,
+        and paid jobs through the charity programme. She gets what she needs to scale —
+        we get a living, breathing case study from day one.
+      </p>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
+          <h3 class="text-xl font-semibold tyne-blue mb-3">What cleaners get</h3>
+          <ul class="space-y-3 text-zinc-600">
+            <li>✓ Free field-service software (v1)</li>
+            <li>✓ Professional website support</li>
+            <li>✓ Paid work via welcome-home cleans</li>
+            <li>✓ Scheduling, routing, and admin tools</li>
+          </ul>
+        </div>
+        <div class="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
+          <h3 class="text-xl font-semibold tyne-blue mb-3">What customers get</h3>
+          <ul class="space-y-3 text-zinc-600">
+            <li>✓ Reliable local teams</li>
+            <li>✓ Clear booking and communication</li>
+            <li>✓ Domestic and commercial cleans</li>
+            <li>✓ Quality backed by modern systems</li>
+          </ul>
+        </div>
       </div>
-  </article>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap">
-      <p>Professional cleaning across Tyneside</p>
-      <p class="family">
-          <a href="https://tyneside.software/">Tyneside Software</a> ·           <a href="https://tyneside.charity/">Tyneside Charity</a> ·           <a href="https://tyneside.group/">Tyneside Group</a>      </p>
-      <p class="copy">&copy; Tyneside Cleaning</p>
     </div>
-  </footer>
+  </section>
+
+  <section class="py-20 bg-zinc-50" id="ecosystem">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-3xl sm:text-4xl font-bold tyne-blue text-center mb-4">Part of something bigger</h2>
+      <p class="text-center text-zinc-600 max-w-2xl mx-auto mb-12">
+        Cleaning sits in the middle of the plan: prove the software, grow local businesses, fund good work.
+      </p>
+<div class="grid md:grid-cols-3 gap-8">
+    <div class="rounded-3xl p-8 bg-zinc-100">
+      <div class="text-5xl mb-6 font-bold text-zinc-300" aria-hidden="true">1</div>
+      <h3 class="font-semibold text-2xl mb-3 tyne-blue">Software</h3>
+      <p class="text-zinc-600">Vertical logistics and work-management for any business that sends people out to jobs. Free for local cleaners while we prove the product.</p>
+      <p class="mt-4">
+        <a href="https://tyneside.software/"
+           class="font-semibold underline-offset-2 hover:underline no-underline tyne-blue">
+          tyneside.software
+        </a>
+      </p>
+    </div>
+    <div class="rounded-3xl p-8 bg-tyne text-white ring-2 ring-amber-brand">
+      <div class="text-5xl mb-6 font-bold text-amber-brand" aria-hidden="true">2</div>
+      <h3 class="font-semibold text-2xl mb-3 ">Cleaning ecosystem</h3>
+      <p class="text-zinc-200">Backing local entrepreneurs with free software, a proper website, and paid work. A living case study from day one.</p>
+      <p class="mt-4">
+        <a href="https://tyneside.cleaning/"
+           class="font-semibold underline-offset-2 hover:underline no-underline text-white">
+          tyneside.cleaning
+        </a>
+      </p>
+    </div>
+    <div class="rounded-3xl p-8 bg-zinc-100">
+      <div class="text-5xl mb-6 font-bold text-zinc-300" aria-hidden="true">3</div>
+      <h3 class="font-semibold text-2xl mb-3 tyne-blue">Charity</h3>
+      <p class="text-zinc-600">Free welcome-home deep cleans for new parents in the North East. Cleaners get paid. Families get help. Software runs the work.</p>
+      <p class="mt-4">
+        <a href="https://tyneside.charity/"
+           class="font-semibold underline-offset-2 hover:underline no-underline tyne-blue">
+          tyneside.charity
+        </a>
+      </p>
+    </div>
+</div>    </div>
+  </section>
+
+  <section class="py-20 bg-white" id="how">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold tyne-blue mb-10">How it works</h2>
+      <div class="grid md:grid-cols-3 gap-8 text-left">
+        <div class="rounded-3xl bg-zinc-50 p-8">
+          <p class="text-amber-brand font-bold text-sm tracking-wide mb-2">STEP 1</p>
+          <h3 class="font-semibold text-xl tyne-blue mb-2">Partner</h3>
+          <p class="text-zinc-600">We onboard local cleaning businesses with free tools and a proper digital presence.</p>
+        </div>
+        <div class="rounded-3xl bg-zinc-50 p-8">
+          <p class="text-amber-brand font-bold text-sm tracking-wide mb-2">STEP 2</p>
+          <h3 class="font-semibold text-xl tyne-blue mb-2">Deliver</h3>
+          <p class="text-zinc-600">Teams run jobs with software that handles scheduling, routing, and customer touchpoints.</p>
+        </div>
+        <div class="rounded-3xl bg-zinc-50 p-8">
+          <p class="text-amber-brand font-bold text-sm tracking-wide mb-2">STEP 3</p>
+          <h3 class="font-semibold text-xl tyne-blue mb-2">Grow</h3>
+          <p class="text-zinc-600">Charity programmes create steady paid work. Reputation compounds. More cleaners join.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="py-24 bg-tyne text-white text-center">
+    <div class="max-w-2xl mx-auto px-6">
+      <h2 class="text-4xl sm:text-5xl font-bold mb-6">Cleaner or customer?</h2>
+      <p class="text-xl sm:text-2xl mb-10 text-zinc-200">
+        Whether you’re building a cleaning business or need a reliable team — say hello.
+      </p>
+      <a href="mailto:hello@tyneside.cleaning"
+         class="inline-block bg-white text-tyne px-10 sm:px-12 py-5 sm:py-6 rounded-3xl text-xl sm:text-2xl font-semibold hover:bg-amber-400 transition no-underline">
+        hello@tyneside.cleaning
+      </a>
+      <p class="mt-12 text-sm opacity-75">
+        Powered by <a href="https://tyneside.software/" class="underline text-white">Tyneside Software</a>
+        · Impact via <a href="https://tyneside.charity/" class="underline text-white">Tyneside Charity</a>
+      </p>
+    </div>
+  </section>
+
+<footer class="bg-zinc-900 text-zinc-400 py-10 text-center text-sm px-6">
+  <div class="max-w-4xl mx-auto">
+    <p class="flex flex-wrap justify-center gap-x-3 gap-y-2 text-zinc-300 font-medium mb-6">
+        <a href="https://tyneside.software/"
+           class="text-zinc-400 hover:text-white transition no-underline">
+          Tyneside Software
+        </a>
+<span class="text-zinc-600" aria-hidden="true">·</span>        <a href="https://tyneside.cleaning/"
+           class="text-white transition no-underline">
+          Tyneside Cleaning
+        </a>
+<span class="text-zinc-600" aria-hidden="true">·</span>        <a href="https://tyneside.charity/"
+           class="text-zinc-400 hover:text-white transition no-underline">
+          Tyneside Charity
+        </a>
+<span class="text-zinc-600" aria-hidden="true">·</span>        <a href="https://tyneside.group/"
+           class="text-zinc-400 hover:text-white transition no-underline">
+          Tyneside Group
+        </a>
+    </p>
+    <p>
+      Tyneside Software Ltd • 10 Abbey Terrace, Newcastle upon Tyne, NE27 0QP<br>
+      Company #17326934 • SIC 58290 • Proudly made on the banks of the Tyne
+    </p>
+    <p class="mt-4 opacity-70">
+      &copy; Tyneside Cleaning · Part of the Tyneside family
+    </p>
+  </div>
+</footer>
 </body>
 </html>
