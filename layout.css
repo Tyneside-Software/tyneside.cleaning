@@ -55,41 +55,41 @@ a:hover {
   margin-inline: auto;
 }
 
-/* —— NAV (identical geometry on every brand site) —— */
+/* —— NAV: rigid 3-column grid (same on every brand, including GROUP) —— */
 .site-nav {
+  --nav-brand-w: 15.5rem;
+  --nav-cta-w: 12rem;
   position: sticky;
   top: 0;
   z-index: 50;
   background: var(--nav-bg);
-  /* Thickness fixed so themes cannot shift content by border width */
   border-bottom: 1px solid var(--border);
   backdrop-filter: var(--nav-blur, none);
-  /* Fixed 2px accent underline — same height on every theme */
-  box-shadow: var(--nav-shadow), inset 0 -2px 0 var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 .site-nav .inner {
-  --nav-cta-w: 11.75rem;
   width: min(1080px, calc(100% - 2rem));
   margin: 0 auto;
-  position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--nav-brand-w) minmax(0, 1fr) var(--nav-cta-w);
   align-items: center;
-  gap: 1rem;
+  column-gap: 0.75rem;
   min-height: 4.25rem;
-  padding: 0.75rem 0;
-  /* Reserve exact space so the CTA never pushes the brand/links */
-  padding-right: calc(var(--nav-cta-w) + 1rem);
+  height: 4.25rem;
+  padding: 0;
   box-sizing: border-box;
 }
 
 .brand-link {
+  grid-column: 1;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.55rem;
+  width: 100%;
   min-width: 0;
-  flex: 0 1 auto;
-  max-width: 16rem;
+  max-width: var(--nav-brand-w);
+  overflow: hidden;
   color: inherit;
   text-decoration: none;
 }
@@ -100,8 +100,8 @@ a:hover {
 }
 
 .brand-link img {
-  height: 2.35rem;
-  width: 2.35rem;
+  height: 2.25rem;
+  width: 2.25rem;
   flex-shrink: 0;
   filter: var(--logo-filter, none);
   object-fit: contain;
@@ -110,55 +110,60 @@ a:hover {
 .brand-word {
   font-family: "Segoe UI", system-ui, sans-serif;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   letter-spacing: 0.02em;
   color: var(--brand);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .brand-sub {
   font-family: "Segoe UI", system-ui, sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--brand-muted);
   white-space: nowrap;
-  /* Same slot width for SOFTWARE / CLEANING / CHARITY / GROUP / GAMES */
+  /* Fixed slot so GROUP and SOFTWARE occupy the same width */
   display: inline-block;
-  min-width: 6.75rem;
+  width: 6.5rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 @media (max-width: 640px) {
   .brand-sub {
     display: none;
   }
-
-  .brand-link {
-    max-width: none;
-  }
 }
 
 .nav-links {
+  grid-column: 2;
   display: none;
-  flex: 1 1 auto;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.55rem;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
   min-width: 0;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 .nav-links a {
   color: var(--muted);
   text-decoration: none;
-  padding: 0.3rem 0.45rem;
+  padding: 0.28rem 0.4rem;
   border-radius: 8px;
   border: 1px solid transparent;
   white-space: nowrap;
+  box-sizing: border-box;
+  /* Equal-ish chips so current highlight doesn't reflow the row */
+  min-width: 4.75rem;
+  text-align: center;
 }
 
 .nav-links a:hover {
@@ -173,14 +178,12 @@ a:hover {
   background: var(--accent-soft);
 }
 
-/* Pinned to the same right edge on every site */
 .nav-cta {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--nav-cta-w);
-  flex: none;
+  grid-column: 3;
+  width: 100%;
+  height: 2.75rem;
+  justify-self: stretch;
+  align-self: center;
 }
 
 .nav-cta .btn,
@@ -194,7 +197,6 @@ a:hover {
   max-height: 2.75rem !important;
   box-sizing: border-box !important;
   margin: 0 !important;
-  /* Neutralise theme-specific button chrome that shifts geometry */
   font-family: "Segoe UI", system-ui, sans-serif !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
@@ -203,10 +205,16 @@ a:hover {
   border-width: 1px !important;
   border-style: solid !important;
   border-radius: 10px !important;
-  padding: 0 0.65rem !important;
+  padding: 0 0.5rem !important;
   white-space: nowrap !important;
   line-height: 1.2 !important;
   box-shadow: none !important;
+  transform: none !important;
+}
+
+.nav-cta .btn:hover,
+.nav-cta .btn-fill:hover {
+  transform: none !important;
 }
 
 @media (min-width: 960px) {
@@ -216,15 +224,36 @@ a:hover {
 }
 
 @media (max-width: 959px) {
+  .site-nav .inner {
+    grid-template-columns: minmax(0, 1fr) var(--nav-cta-w);
+  }
+
+  .brand-link {
+    grid-column: 1;
+    max-width: none;
+  }
+
   .nav-links {
     display: none;
+  }
+
+  .nav-cta {
+    grid-column: 2;
   }
 }
 
 @media (max-width: 420px) {
+  .site-nav {
+    --nav-cta-w: 9.5rem;
+  }
+
   .site-nav .inner {
-    --nav-cta-w: 9.25rem;
-    min-height: 3.75rem;
+    min-height: 3.85rem;
+    height: 3.85rem;
+  }
+
+  .nav-cta {
+    height: 2.5rem;
   }
 
   .nav-cta .btn,
