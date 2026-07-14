@@ -606,3 +606,101 @@ a:hover {
 .blink {
   animation: none;
 }
+
+/* —— DATA TABLES —— */
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-lg);
+  border: var(--panel-border);
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--label);
+  background: var(--accent-soft);
+}
+
+.data-table td {
+  color: var(--panel-text);
+}
+
+.data-table td.num,
+.data-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.data-table tbody tr:last-child th,
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover td {
+  background: var(--accent-soft);
+}
+
+.data-table tfoot td {
+  font-weight: 700;
+  color: var(--heading);
+  background: var(--accent-soft);
+  border-bottom: none;
+}
+
+.stat-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 640px) {
+  .stat-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stat {
+  text-align: center;
+  padding: 1.25rem 1rem;
+  background: var(--panel-bg);
+  border: var(--panel-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--panel-shadow);
+}
+
+.stat .value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--heading);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.stat .label {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
