@@ -410,6 +410,104 @@
   --footer-link-bg: rgba(217, 119, 6, 0.12);
 }
 
+/* ========== STORE — retail craft / clean shop ========== */
+.theme-store {
+  color-scheme: light;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #faf8f5;
+  --bg-fx: radial-gradient(900px 480px at 10% -10%, rgba(190, 24, 93, 0.08), transparent 55%),
+    radial-gradient(700px 400px at 100% 0%, rgba(14, 116, 144, 0.08), transparent 50%);
+  --text: #1c1917;
+  --muted: #78716c;
+  --heading: #0c0a09;
+  --brand: #9f1239;
+  --brand-muted: #0e7490;
+  --accent: #be185d;
+  --accent-soft: rgba(190, 24, 93, 0.1);
+  --link: #0e7490;
+  --link-hover: #155e75;
+  --label: #be185d;
+  --border: #e7e5e4;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+
+  --nav-bg: rgba(255, 255, 255, 0.94);
+  --nav-border: 1px solid #e7e5e4;
+  --nav-shadow: 0 4px 20px rgba(28, 25, 23, 0.06);
+  --nav-blur: blur(10px);
+
+  --btn-border: 1px solid #0e7490;
+  --btn-color: #0e7490;
+  --btn-bg: #fff;
+  --btn-bg-hover: #ecfeff;
+  --btn-color-hover: #155e75;
+  --btn-shadow: none;
+  --btn-fill-border: 1px solid #be185d;
+  --btn-fill-color: #fff;
+  --btn-fill-bg: #be185d;
+  --btn-fill-bg-hover: #9d174d;
+  --btn-fill-color-hover: #fff;
+  --btn-fill-shadow: 0 8px 22px rgba(190, 24, 93, 0.25);
+  --btn-sec-border: 1px solid #d6d3d1;
+  --btn-sec-color: #44403c;
+  --btn-sec-bg: #fff;
+  --btn-sec-bg-hover: #f5f5f4;
+  --btn-sec-color-hover: #1c1917;
+
+  --hero-bg: linear-gradient(165deg, #fff 0%, #fdf2f8 45%, #ecfeff 100%);
+  --hero-border: 1px solid #e7e5e4;
+  --hero-text: #1c1917;
+  --hero-kicker: #be185d;
+  --hero-title: #9f1239;
+  --hero-tag: #0e7490;
+  --hero-lead: #57534e;
+  --hero-meta: #78716c;
+  --hero-title-tracking: -0.02em;
+
+  --section-alt-bg: #f5f5f4;
+  --section-alt-border: 1px solid #e7e5e4;
+  --cta-bg: linear-gradient(180deg, #9f1239, #be185d);
+  --cta-text: #fff1f2;
+  --cta-heading: #fff;
+  --cta-muted: rgba(255, 241, 242, 0.9);
+
+  --panel-bg: #fff;
+  --panel-border: 1px solid #e7e5e4;
+  --panel-shadow: 0 10px 28px rgba(28, 25, 23, 0.06);
+  --panel-heading: #9f1239;
+  --panel-text: #57534e;
+  --panel-active-bg: #9f1239;
+  --panel-active-border: 1px solid #9f1239;
+  --panel-active-shadow: 0 12px 30px rgba(159, 18, 57, 0.2);
+  --panel-active-heading: #fff;
+  --panel-active-text: #fecdd3;
+
+  --chip-bg: #fff;
+  --chip-border: 1px solid #e7e5e4;
+  --chip-text: #1c1917;
+  --chip-bullet: "→ ";
+
+  --quote-bg: #fff;
+  --quote-border: 1px solid #e7e5e4;
+  --quote-shadow: none;
+  --quote-text: #44403c;
+  --quote-cite: #be185d;
+
+  --step-bg: #fff;
+  --step-border: 1px solid #e7e5e4;
+  --step-n-bg: #fce7f3;
+  --step-n-border: 1px solid #f9a8d4;
+  --step-n-color: #9f1239;
+
+  --footer-bg: #1c1917;
+  --footer-border: none;
+  --footer-text: #a8a29e;
+  --footer-link: #a8a29e;
+  --footer-link-active: #f9a8d4;
+  --footer-link-bg: rgba(249, 168, 212, 0.12);
+}
+
 /* ========== GAMES — neon arcade (snake + geometry dash) ========== */
 .theme-games {
   color-scheme: dark;
