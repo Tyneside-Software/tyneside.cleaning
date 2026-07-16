@@ -311,8 +311,116 @@
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
+/* ========== TECHNOLOGY — recycled kit / amber circuit ========== */
+.theme-technology {
+  color-scheme: dark;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #12100c;
+  --bg-fx:
+    radial-gradient(800px 440px at 10% -5%, rgba(245, 158, 11, 0.16), transparent 55%),
+    radial-gradient(600px 380px at 100% 10%, rgba(217, 119, 6, 0.1), transparent 50%);
+  --text: #f5f0e6;
+  --muted: #b8a88c;
+  --heading: #fff8eb;
+  --brand: #fde68a;
+  --brand-muted: #fbbf24;
+  --accent: #f59e0b;
+  --accent-soft: rgba(245, 158, 11, 0.14);
+  --link: #fcd34d;
+  --link-hover: #fde68a;
+  --label: #fbbf24;
+  --border: #3d3424;
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-lg: 14px;
+
+  --nav-bg: rgba(18, 16, 12, 0.92);
+  --nav-border: 1px solid #3d3424;
+  --nav-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --nav-blur: blur(10px);
+
+  --btn-border: 1px solid #f59e0b;
+  --btn-color: #fde68a;
+  --btn-bg: transparent;
+  --btn-bg-hover: rgba(245, 158, 11, 0.15);
+  --btn-color-hover: #fff;
+  --btn-shadow: none;
+  --btn-fill-border: 1px solid #d97706;
+  --btn-fill-color: #1c1410;
+  --btn-fill-bg: #f59e0b;
+  --btn-fill-bg-hover: #fbbf24;
+  --btn-fill-color-hover: #1c1410;
+  --btn-fill-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+  --btn-sec-border: 1px solid #6b5b3e;
+  --btn-sec-color: #f5f0e6;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: rgba(245, 158, 11, 0.1);
+  --btn-sec-color-hover: #fff;
+
+  --hero-bg: linear-gradient(165deg, #1c1812 0%, #12100c 55%, #0f0d0a 100%);
+  --hero-border: 1px solid #3d3424;
+  --hero-text: #f5f0e6;
+  --hero-kicker: #fbbf24;
+  --hero-title: #fffbeb;
+  --hero-tag: #fcd34d;
+  --hero-lead: #b8a88c;
+  --hero-meta: #8a7a60;
+  --hero-title-tracking: -0.03em;
+
+  --section-alt-bg: rgba(28, 24, 18, 0.7);
+  --section-alt-border: 1px solid #3d3424;
+  --cta-bg: linear-gradient(180deg, #2a2114, #12100c);
+  --cta-border: 1px solid #5c4a28;
+  --cta-text: #f5f0e6;
+  --cta-heading: #fffbeb;
+  --cta-muted: #b8a88c;
+
+  --panel-bg: #1a1610;
+  --panel-border: 1px solid #3d3424;
+  --panel-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+  --panel-heading: #fcd34d;
+  --panel-text: #b8a88c;
+  --panel-active-bg: #292015;
+  --panel-active-border: 1px solid #f59e0b;
+  --panel-active-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 12px 32px rgba(0, 0, 0, 0.35);
+  --panel-active-heading: #fde68a;
+  --panel-active-text: #f5f0e6;
+
+  --chip-bg: #1a1610;
+  --chip-border: 1px solid #3d3424;
+  --chip-text: #f5f0e6;
+  --chip-bullet: "▸ ";
+
+  --quote-bg: #1a1610;
+  --quote-border: 1px solid #3d3424;
+  --quote-shadow: none;
+  --quote-text: #d6cbb5;
+  --quote-cite: #fbbf24;
+
+  --step-bg: #1a1610;
+  --step-border: 1px solid #3d3424;
+  --step-n-bg: #3d2e12;
+  --step-n-border: 1px solid #f59e0b;
+  --step-n-color: #fcd34d;
+
+  --footer-bg: #0a0907;
+  --footer-border: 1px solid #3d3424;
+  --footer-text: #8a7a60;
+  --footer-link: #b8a88c;
+  --footer-link-active: #fcd34d;
+  --footer-link-bg: rgba(245, 158, 11, 0.12);
+}
+
+.theme-technology .panel-m {
+  border-color: #5c4a28;
+}
+.theme-technology .panel-c {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.12), 0 8px 28px rgba(0, 0, 0, 0.3);
+}
+
 /* ========== GROUP — portal that unites all brands ========== */
-/* Software blue · Cleaning teal · Charity rose · Games neon */
+/* Software blue · Cleaning teal · Charity rose · Technology amber · Games neon */
 .theme-group {
   color-scheme: dark;
   --font: "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -529,6 +637,16 @@
   border-color: #e11d48;
 }
 
+.theme-group .portal-card.portal-technology {
+  border-top-color: #f59e0b;
+}
+.theme-group .portal-card.portal-technology .portal-kicker,
+.theme-group .portal-card.portal-technology .portal-go { color: #fbbf24; }
+.theme-group .portal-card.portal-technology:hover {
+  box-shadow: 0 18px 44px rgba(245, 158, 11, 0.28);
+  border-color: #f59e0b;
+}
+
 .theme-group .portal-card.portal-games {
   border-top-color: #00ff66;
   background: linear-gradient(165deg, rgba(10, 0, 30, 0.5) 0%, rgba(15, 23, 42, 0.95) 100%);
@@ -569,8 +687,8 @@
 .theme-group .portal-pill.pill-software { border-color: #3b82f6; color: #93c5fd; }
 .theme-group .portal-pill.pill-cleaning { border-color: #14b8a6; color: #5eead4; }
 .theme-group .portal-pill.pill-charity { border-color: #e11d48; color: #fda4af; }
+.theme-group .portal-pill.pill-technology { border-color: #f59e0b; color: #fbbf24; }
 .theme-group .portal-pill.pill-games { border-color: #00ff66; color: #00ff66; }
-.theme-group .portal-pill.pill-store { border-color: #be185d; color: #f9a8d4; }
 
 .theme-group .loop-row {
   display: grid;
