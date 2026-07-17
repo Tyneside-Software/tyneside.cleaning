@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a clean · Tyneside Cleaning</title>
+  <meta name="description" content="Book a free cleaning slot. Live calendar sync — only available times are shown.">
+  <link rel="canonical" href="https://tyneside.cleaning/">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="layout.css?v=20260717a">
+  <link rel="stylesheet" href="themes.css?v=20260717a">
+  <link rel="stylesheet" href="booking/booking.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="site theme-cleaning booking-page">
+
+<nav class="site-nav" aria-label="Primary">
+  <div class="inner">
+    <a href="index.html" class="brand-link">
+      <img src="logo.svg" width="38" height="38" alt="Tyneside Cleaning">
+      <span class="brand-word">TYNESIDE</span>
+      <span class="brand-sub">CLEANING</span>
+    </a>
+    <div class="nav-links">
+        <a href="https://tyneside.software/"
+           class=""
+>SOFTWARE</a>
+        <a href="https://tyneside.cleaning/"
+           class="is-current"
+aria-current="page">CLEANING</a>
+        <a href="https://tyneside.charity/"
+           class=""
+>CHARITY</a>
+        <a href="https://tyneside.group/"
+           class=""
+>GROUP</a>
+        <a href="https://tyneside.technology/"
+           class=""
+>TECH</a>
+        <a href="https://tyneside.games/"
+           class=""
+>GAMES</a>
+    </div>
+    <div class="nav-cta">
+        <a class="btn btn-fill" href="book.html">Book a clean</a>
+    </div>
+  </div>
+</nav>
+  <div class="booking-wrap">
+    <header class="booking-header">
+      <div>
+        <h1 id="business-name">Book a clean</h1>
+        <p id="business-desc">Pick a free green slot. Busy times from our calendar are blocked automatically.</p>
+      </div>
+      <div class="status-pill demo" id="sync-status" title="Calendar sync status">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="sync-status-text">Loading…</span>
+      </div>
+    </header>
+
+    <div id="alert-banner" role="status"></div>
+
+    <div class="booking-layout">
+      <section class="booking-card calendar-card">
+        <div class="loading-bar" id="loading-bar"></div>
+        <div class="toolbar">
+          <div class="legend">
+            <span><i class="swatch free"></i> Available — click to book</span>
+            <span><i class="swatch busy"></i> Busy (calendar)</span>
+            <span><i class="swatch pending"></i> Pending booking</span>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-refresh">Refresh</button>
+        </div>
+        <div id="calendar"></div>
+      </section>
+
+      <aside class="side">
+        <div class="booking-card">
+          <h2>How it works</h2>
+          <ol class="steps">
+            <li><span class="n">1</span><span>Green slots are free (outside our calendar events &amp; business hours).</span></li>
+            <li><span class="n">2</span><span>Click a free slot and enter your details and address notes.</span></li>
+            <li><span class="n">3</span><span>Confirm — the slot is written to our calendar so others can’t take it.</span></li>
+          </ol>
+          <p class="hint" id="owner-line">Host calendar synced for availability.</p>
+        </div>
+
+        <div class="booking-card">
+          <h2>Your bookings <span id="booking-count" style="color:var(--muted);font-weight:500"></span></h2>
+          <div id="upcoming-list">
+            <p class="empty">No bookings yet. Pick a green slot to book a clean.</p>
+          </div>
+        </div>
+
+        <div class="booking-card">
+          <h2>Prefer WhatsApp?</h2>
+          <p class="empty" style="padding-top:0">
+            Happy to arrange by message if online booking is not right for you.
+          </p>
+          <p style="margin:0.75rem 0 0">
+            <a class="btn btn-secondary" href="https://wa.me/447411949215" rel="noopener" target="_blank">WhatsApp us</a>
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h2 id="modal-title">Book a clean</h2>
+      <p class="slot-label" id="modal-slot"></p>
+      <form id="booking-form">
+        <div class="field">
+          <label for="guest-name">Your name</label>
+          <input id="guest-name" name="name" type="text" required autocomplete="name" placeholder="Jane Smith" />
+        </div>
+        <div class="field">
+          <label for="guest-email">Email</label>
+          <input id="guest-email" name="email" type="email" required autocomplete="email" placeholder="jane@example.com" />
+        </div>
+        <div class="field">
+          <label for="guest-notes">Address &amp; notes (optional)</label>
+          <textarea id="guest-notes" name="notes" placeholder="Postcode, property type, access notes, deep clean vs regular…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="btn-cancel">Cancel</button>
+          <button type="submit" class="btn btn-fill" id="btn-confirm">Confirm clean</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="booking/config.js"></script>
+  <script src="booking/app.js"></script>
+
+<footer class="site-footer">
+  <div class="footer-brands">
+      <a href="https://tyneside.software/" class="">SOFTWARE</a>
+      <a href="https://tyneside.cleaning/" class="is-current">CLEANING</a>
+      <a href="https://tyneside.charity/" class="">CHARITY</a>
+      <a href="https://tyneside.group/" class="">GROUP</a>
+      <a href="https://tyneside.technology/" class="">TECH</a>
+      <a href="https://tyneside.games/" class="">GAMES</a>
+  </div>
+  <p class="legal">
+    Tyneside Software Ltd • Based at <strong>Howden Community Hub</strong>, North Tyneside<br>
+    Company #17326934 • SIC 58290 • Registered office: 10 Abbey Terrace, Newcastle upon Tyne, NE27 0QP<br>
+    <a href="https://wa.me/447411949215" rel="noopener" target="_blank">WhatsApp +44 7411 949215</a>
+    · <a href="mailto:michael@tyneside.software">michael@tyneside.software</a>
+    <span style="opacity:0.85">(email is slower)</span><br>
+    Proudly made on the banks of the Tyne
+  </p>
+  <p class="legal" style="margin-top:0.75rem;opacity:0.7">
+    &copy; Tyneside Cleaning
+ · Part of the Tyneside family  </p>
+</footer>
+</body>
+</html>
