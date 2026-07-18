@@ -1,22 +1,21 @@
 /**
- * Google Calendar Booking System
- * Pure client-side HTML + JS — GitHub Pages compatible.
+ * Tyneside Cleaning — Calendly-style booking
+ * Pure client-side — GitHub Pages compatible.
  *
- * - Loads busy times from a public Google Calendar (API key)
- * - Generates free slots only outside those events
- * - Bookings: Google Calendar event (OAuth) or template link + localStorage
+ * Flow: pick a day (next N days) → pick a start time → enter details → confirm
+ * Busy: Google freeBusy · Write: Apps Script webhook → OAuth → template link
  */
 
 (function () {
   "use strict";
 
-  // ---------------------------------------------------------------------------
-  // Helpers
-  // ---------------------------------------------------------------------------
-
   const STORAGE_KEY = "tyneside-cleaning-booking-v1";
   const CANCELLED_KEY = "tyneside-cleaning-booking-cancelled-v1";
   const BOOKING_MARKER = "Booking-ID:";
+
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
 
   function eventSummaryPrefix() {
     return CONFIG.eventSummaryPrefix || "Meeting with";
@@ -43,6 +42,10 @@
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }
 
+  function startOfDay(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
   function overlaps(aStart, aEnd, bStart, bEnd) {
     return aStart < bEnd && bStart < aEnd;
   }
@@ -52,7 +55,12 @@
   }
 
   function formatRange(start, end) {
-    const optsDate = { weekday: "short", month: "short", day: "numeric", timeZone: tz() };
+    const optsDate = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      timeZone: tz(),
+    };
     const optsTime = { hour: "numeric", minute: "2-digit", timeZone: tz() };
     const d = start.toLocaleDateString(undefined, optsDate);
     const t1 = start.toLocaleTimeString(undefined, optsTime);
@@ -60,8 +68,24 @@
     return `${d} · ${t1} – ${t2}`;
   }
 
+  function formatTime(date) {
+    return date.toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: tz(),
+    });
+  }
+
+  function formatLongDate(date) {
+    return date.toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone: tz(),
+    });
+  }
+
   function formatIsoLocal(date) {
-    // YYYYMMDDTHHmmss for Google Calendar template links (local wall time)
     return (
       date.getFullYear() +
       pad(date.getMonth() + 1) +
@@ -77,6 +101,14 @@
     return "b_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   }
 
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function toast(msg, type) {
     const el = document.getElementById("toast");
     el.textContent = msg;
@@ -88,18 +120,20 @@
   }
 
   function setLoading(on) {
-    document.getElementById("loading-bar").classList.toggle("active", on);
+    const bar = document.getElementById("loading-bar");
+    if (bar) bar.classList.toggle("active", on);
   }
 
   function setStatus(mode, text) {
     const pill = document.getElementById("sync-status");
     const label = document.getElementById("sync-status-text");
-    pill.className = "status-pill " + mode;
-    label.textContent = text;
+    if (pill) pill.className = "status-pill " + mode;
+    if (label) label.textContent = text;
   }
 
   function showBanner(text) {
     const el = document.getElementById("alert-banner");
+    if (!el) return;
     if (!text) {
       el.classList.remove("show");
       el.textContent = "";
@@ -110,7 +144,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Persistence (local bookings — optimistic UI + same-browser pending)
+  // Persistence
   // ---------------------------------------------------------------------------
 
   function loadLocalBookings() {
@@ -129,14 +163,12 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
-  /** Slots the user cancelled — ignored if they still appear on Google Calendar. */
   function loadCancelledSlots() {
     try {
       const raw = localStorage.getItem(CANCELLED_KEY);
       if (!raw) return [];
       const list = JSON.parse(raw);
       const now = Date.now();
-      // Keep for 14 days or until the slot end has passed + 1 day
       return list.filter((c) => {
         const end = new Date(c.end).getTime();
         const cancelledAt = new Date(c.cancelledAt || 0).getTime();
@@ -192,20 +224,11 @@
       summary.startsWith(prefix);
 
     return cancelled.some((c) => {
-      // Explicit Google event id from OAuth create
       if (c.googleEventId && (ev.id === c.googleEventId || props.googleEventId === c.googleEventId)) {
         return true;
       }
-      // Description still contains our Booking-ID marker
-      if (c.id && description.includes(String(c.id).toLowerCase())) {
-        return true;
-      }
-      // Same window as cancelled booking (covers free/busy-only calendars with no description,
-      // and invites that landed on the host calendar after the guest saved the template)
-      if (timesMatch(startIso, c.start) && timesMatch(endIso, c.end)) {
-        return true;
-      }
-      // Broader match when event looks like a web booking but times are slightly off
+      if (c.id && description.includes(String(c.id).toLowerCase())) return true;
+      if (timesMatch(startIso, c.start) && timesMatch(endIso, c.end)) return true;
       if (
         looksLikeWebBooking &&
         timesMatch(startIso, c.start, 5 * 60 * 1000) &&
@@ -221,7 +244,6 @@
     return (events || []).filter((ev) => !isCancelledWebBookingEvent(ev));
   }
 
-  /** Immediately mark a slot busy on this client after a successful OAuth book. */
   function injectOptimisticBusy(booking) {
     const id = booking.googleEventId || "opt-" + booking.id;
     const exists = state.googleEvents.some(
@@ -232,13 +254,9 @@
     if (exists) return;
     state.googleEvents.push({
       id: id,
-      title: CONFIG.hideEventDetails ? "Busy" : "Booking: " + booking.name,
+      title: "Busy",
       start: booking.start,
       end: booking.end,
-      classNames: ["event-busy"],
-      editable: false,
-      overlap: false,
-      display: "block",
       extendedProps: {
         kind: "google",
         summary: "Booking: " + booking.name,
@@ -258,42 +276,37 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Demo busy events (when no API key)
+  // Demo + Google
   // ---------------------------------------------------------------------------
 
   function buildDemoBusyEvents() {
     const events = [];
     const now = new Date();
-    const startDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startDay = startOfDay(now);
 
     for (let d = 0; d < CONFIG.bookingWindowDays; d++) {
       const day = new Date(startDay);
       day.setDate(day.getDate() + d);
-      const dow = day.getDay();
-      if (!CONFIG.businessDays.includes(dow)) continue;
+      if (!CONFIG.businessDays.includes(day.getDay())) continue;
 
-      // Pseudo-random but stable per day
       const seed = day.getFullYear() * 10000 + (day.getMonth() + 1) * 100 + day.getDate();
-      const slots = [
-        { h: 10, m: 0, dur: 60, title: "Team standup" },
-        { h: 13, m: 0, dur: 90, title: "Client call" },
-        { h: 15, m: 30, dur: 30, title: "Focus block" },
+      const blocks = [
+        { h: 10, m: 0, dur: 60 },
+        { h: 13, m: 0, dur: 90 },
+        { h: 15, m: 30, dur: 30 },
       ];
 
-      slots.forEach((s, i) => {
-        if ((seed + i * 7) % 3 === 0) return; // skip some days
+      blocks.forEach((s, i) => {
+        if ((seed + i * 7) % 3 === 0) return;
         const start = new Date(day);
         start.setHours(s.h, s.m, 0, 0);
         const end = addMinutes(start, s.dur);
         if (end <= now) return;
         events.push({
           id: "demo-" + seed + "-" + i,
-          title: CONFIG.hideEventDetails ? "Busy" : s.title,
+          title: "Busy",
           start: start.toISOString(),
           end: end.toISOString(),
-          classNames: ["event-busy"],
-          editable: false,
-          overlap: false,
           extendedProps: { kind: "google" },
         });
       });
@@ -301,77 +314,67 @@
     return events;
   }
 
-  // ---------------------------------------------------------------------------
-  // Google Calendar API
-  // ---------------------------------------------------------------------------
-
   function isLiveMode() {
     return Boolean(CONFIG.googleApiKey && CONFIG.googleApiKey.trim());
   }
 
-  async function fetchGoogleEvents(timeMin, timeMax) {
-    const calId = encodeURIComponent(CONFIG.calendarId || "primary");
-    const params = new URLSearchParams({
-      key: CONFIG.googleApiKey,
-      timeMin: timeMin.toISOString(),
-      timeMax: timeMax.toISOString(),
-      singleEvents: "true",
-      orderBy: "startTime",
-      maxResults: "250",
-      timeZone: tz(),
+  async function fetchGoogleBusy(timeMin, timeMax) {
+    const calendarId = (CONFIG.calendarId || "").trim();
+    if (!calendarId || calendarId === "primary" || calendarId === "REPLACE_WITH_CALENDAR_ID") {
+      throw new Error(
+        'Set calendarId in config.js to the full Calendar ID (not "primary").'
+      );
+    }
+
+    const params = new URLSearchParams({ key: CONFIG.googleApiKey });
+    const url = `https://www.googleapis.com/calendar/v3/freeBusy?${params}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        timeMin: timeMin.toISOString(),
+        timeMax: timeMax.toISOString(),
+        timeZone: tz(),
+        items: [{ id: calendarId }],
+      }),
     });
 
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${calId}/events?${params}`;
-    const res = await fetch(url);
     if (!res.ok) {
       const body = await res.text();
       let detail = res.statusText;
       try {
-        const j = JSON.parse(body);
-        detail = j.error?.message || detail;
+        detail = JSON.parse(body).error?.message || detail;
       } catch {
         /* ignore */
       }
-      throw new Error(`Google Calendar API (${res.status}): ${detail}`);
+      throw new Error(`Google freeBusy (${res.status}): ${detail}`);
     }
+
     const data = await res.json();
-    return (data.items || [])
-      .filter((ev) => ev.status !== "cancelled")
-      .map((ev) => {
-        const allDay = Boolean(ev.start.date && !ev.start.dateTime);
-        let start;
-        let end;
-        if (allDay) {
-          start = new Date(ev.start.date + "T00:00:00");
-          end = new Date(ev.end.date + "T00:00:00");
-        } else {
-          start = new Date(ev.start.dateTime);
-          end = new Date(ev.end.dateTime || ev.start.dateTime);
-        }
-        return {
-          id: ev.id,
-          title: CONFIG.hideEventDetails ? "Busy" : ev.summary || "Busy",
-          start: start.toISOString(),
-          end: end.toISOString(),
-          allDay,
-          classNames: ["event-busy"],
-          editable: false,
-          overlap: false,
-          display: "block",
-          extendedProps: {
-            kind: "google",
-            summary: ev.summary || "",
-            description: ev.description || "",
-            googleEventId: ev.id,
-          },
-        };
-      });
+    const cal = data.calendars && data.calendars[calendarId];
+    if (!cal) throw new Error("Calendar not returned by freeBusy — check calendarId.");
+    if (cal.errors && cal.errors.length) {
+      const msg = cal.errors.map((e) => e.reason || e.message).join("; ");
+      throw new Error(
+        "freeBusy calendar error: " +
+          msg +
+          ". Make the calendar public (free/busy is enough) and check the ID."
+      );
+    }
+
+    return (cal.busy || []).map((block, i) => {
+      const start = new Date(block.start);
+      const end = new Date(block.end);
+      return {
+        id: "busy-" + start.toISOString() + "-" + i,
+        title: "Busy",
+        start: start.toISOString(),
+        end: end.toISOString(),
+        extendedProps: { kind: "google", summary: "Busy", description: "", googleEventId: null },
+      };
+    });
   }
 
-  /**
-   * Create a calendar event via OAuth (visitor signed in).
-   * Event is created on the visitor's primary calendar with the owner as attendee.
-   */
   function bookingDescription(booking) {
     return (
       (booking.notes ? booking.notes + "\n\n" : "") +
@@ -380,16 +383,41 @@
     );
   }
 
+  async function createEventWithWebhook(booking) {
+    const url = (CONFIG.bookingWebhookUrl || "").trim();
+    if (!url) throw new Error("bookingWebhookUrl not configured");
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        id: booking.id,
+        name: booking.name,
+        email: booking.email,
+        notes: booking.notes || "",
+        start: booking.start,
+        end: booking.end,
+        summary: `${eventSummaryPrefix()} ${booking.name}`,
+        description: bookingDescription(booking),
+        timeZone: tz(),
+      }),
+      redirect: "follow",
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || "Booking webhook failed (" + res.status + ")");
+    }
+    return { id: data.id || null, htmlLink: data.htmlLink || null };
+  }
+
   async function createEventWithOAuth(accessToken, booking) {
     const body = {
       summary: `${eventSummaryPrefix()} ${booking.name}`,
       description: bookingDescription(booking),
       start: { dateTime: booking.start, timeZone: tz() },
       end: { dateTime: booking.end, timeZone: tz() },
-      attendees: [
-        { email: CONFIG.ownerEmail },
-        { email: booking.email },
-      ],
+      attendees: [{ email: CONFIG.ownerEmail }, { email: booking.email }],
       reminders: {
         useDefault: false,
         overrides: [
@@ -427,10 +455,7 @@
         headers: { Authorization: "Bearer " + accessToken },
       }
     );
-    // 204 success, 410 already gone, 404 not found — all fine for cancel
-    if (res.ok || res.status === 204 || res.status === 404 || res.status === 410) {
-      return true;
-    }
+    if (res.ok || res.status === 204 || res.status === 404 || res.status === 410) return true;
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error?.message || "Failed to delete calendar event");
   }
@@ -479,7 +504,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Free slot generation
+  // Availability
   // ---------------------------------------------------------------------------
 
   function getBusyIntervals(googleEvents, localBookings, exceptId) {
@@ -498,18 +523,21 @@
     return !busy.some((b) => overlaps(start, end, b.start, b.end));
   }
 
+  /** All free start times across the booking window (default 28 days). */
   function generateAvailableSlots(busy) {
     const slots = [];
     const now = new Date();
-    const minStart = addMinutes(now, CONFIG.minNoticeHours * 60);
+    const minStart = addMinutes(now, (CONFIG.minNoticeHours || 0) * 60);
     const { h: startH, m: startM } = parseHHMM(CONFIG.businessHours.start);
     const { h: endH, m: endM } = parseHHMM(CONFIG.businessHours.end);
-    const duration = CONFIG.slotDurationMinutes;
+    const duration = CONFIG.slotDurationMinutes || 120;
+    const step = CONFIG.slotStepMinutes || duration;
+    const windowDays = CONFIG.bookingWindowDays || 28;
 
-    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const day0 = startOfDay(now);
 
-    for (let d = 0; d < CONFIG.bookingWindowDays; d++) {
-      const current = new Date(day);
+    for (let d = 0; d < windowDays; d++) {
+      const current = new Date(day0);
       current.setDate(current.getDate() + d);
       if (!CONFIG.businessDays.includes(current.getDay())) continue;
 
@@ -521,111 +549,249 @@
       while (addMinutes(cursor, duration) <= dayEnd) {
         const slotEnd = addMinutes(cursor, duration);
         if (cursor >= minStart && isSlotFree(cursor, slotEnd, busy)) {
-          slots.push({
-            start: new Date(cursor),
-            end: new Date(slotEnd),
-          });
+          slots.push({ start: new Date(cursor), end: new Date(slotEnd) });
         }
-        cursor = slotEnd;
+        cursor = addMinutes(cursor, step);
       }
     }
     return slots;
   }
 
-  function slotsToEvents(slots) {
-    return slots.map((s) => ({
-      id: "free-" + s.start.toISOString(),
-      title: "Available",
-      start: s.start.toISOString(),
-      end: s.end.toISOString(),
-      classNames: ["event-available"],
-      editable: false,
-      overlap: false,
-      extendedProps: { kind: "available" },
-    }));
+  function recomputeAvailability() {
+    const busy = getBusyIntervals(state.googleEvents, state.localBookings);
+    state.availableSlots = generateAvailableSlots(busy);
+    state.slotsByDay = {};
+    state.availableSlots.forEach((s) => {
+      const key = toDateKey(s.start);
+      if (!state.slotsByDay[key]) state.slotsByDay[key] = [];
+      state.slotsByDay[key].push(s);
+    });
   }
 
-  function localBookingsToEvents(bookings) {
-    return bookings.map((b) => ({
-      id: b.id,
-      title: "Pending: " + b.name,
-      start: b.start,
-      end: b.end,
-      classNames: ["event-pending"],
-      editable: false,
-      overlap: false,
-      extendedProps: { kind: "local", booking: b },
-    }));
+  function windowBounds() {
+    const start = startOfDay(new Date());
+    const end = new Date(start);
+    end.setDate(end.getDate() + (CONFIG.bookingWindowDays || 28) - 1);
+    return { start, end };
   }
 
   // ---------------------------------------------------------------------------
-  // App state & UI
+  // State
   // ---------------------------------------------------------------------------
 
   const state = {
     googleEvents: [],
     localBookings: loadLocalBookings(),
     cancelledSlots: loadCancelledSlots(),
-    availableEvents: [],
-    calendar: null,
+    availableSlots: [],
+    slotsByDay: {},
+    selectedDateKey: null,
     selectedSlot: null,
     oauthToken: null,
+    step: "slots",
   };
 
-  function allCalendarEvents() {
-    return [
-      ...filterActiveGoogleEvents(state.googleEvents),
-      ...localBookingsToEvents(state.localBookings),
-      ...state.availableEvents,
-    ];
+  // ---------------------------------------------------------------------------
+  // UI: steps (date/time buttons — no month calendar)
+  // ---------------------------------------------------------------------------
+
+  function showStep(step) {
+    state.step = step;
+    ["slots", "details", "success"].forEach((name) => {
+      const el = document.getElementById("step-" + name);
+      if (el) el.hidden = name !== step;
+    });
+    updateSelectedSummary();
   }
 
-  function recomputeAvailability() {
-    const busy = getBusyIntervals(state.googleEvents, state.localBookings);
-    const slots = generateAvailableSlots(busy);
-    state.availableEvents = slotsToEvents(slots);
-  }
+  function updateSelectedSummary() {
+    const box = document.getElementById("selected-summary");
+    const text = document.getElementById("selected-summary-text");
+    if (!box || !text) return;
 
-  function refreshCalendarEvents() {
-    if (!state.calendar) return;
-    // Prefer refetch via event source (reliable redraw after cancel/book)
-    const sources = state.calendar.getEventSources();
-    if (sources && sources.length) {
-      sources.forEach((src) => src.refetch());
+    if (state.selectedSlot) {
+      box.hidden = false;
+      text.textContent = formatRange(state.selectedSlot.start, state.selectedSlot.end);
       return;
     }
-    // Fallback: hard replace
-    state.calendar.batchRendering(() => {
-      state.calendar.getEvents().forEach((ev) => ev.remove());
-      allCalendarEvents().forEach((ev) => state.calendar.addEvent(ev));
+    if (state.selectedDateKey) {
+      const [y, m, d] = state.selectedDateKey.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      box.hidden = false;
+      text.textContent = formatLongDate(dt);
+      return;
+    }
+    box.hidden = true;
+    text.textContent = "";
+  }
+
+  /** Ordered list of date keys that still have free starts. */
+  function availableDateKeys() {
+    return Object.keys(state.slotsByDay)
+      .filter((k) => (state.slotsByDay[k] || []).length > 0)
+      .sort();
+  }
+
+  function formatDateBtnParts(date) {
+    const weekday = date.toLocaleDateString(undefined, {
+      weekday: "short",
+      timeZone: tz(),
     });
+    const day = date.toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      timeZone: tz(),
+    });
+    return { weekday, day };
+  }
+
+  function renderDateList() {
+    const list = document.getElementById("date-list");
+    if (!list) return;
+
+    const keys = availableDateKeys();
+    if (!keys.length) {
+      list.innerHTML =
+        '<p class="cal-dates-empty">No free starts in the next ' +
+        (CONFIG.bookingWindowDays || 28) +
+        " days. Try again later or WhatsApp us.</p>";
+      const times = document.getElementById("time-list");
+      if (times) {
+        times.innerHTML = '<p class="cal-times-empty">No times available.</p>';
+      }
+      return;
+    }
+
+    // Keep selection if still valid; otherwise pick the first free day
+    if (!state.selectedDateKey || !keys.includes(state.selectedDateKey)) {
+      state.selectedDateKey = keys[0];
+    }
+
+    list.innerHTML = keys
+      .map((key) => {
+        const [y, m, d] = key.split("-").map(Number);
+        const date = new Date(y, m - 1, d);
+        const parts = formatDateBtnParts(date);
+        const count = (state.slotsByDay[key] || []).length;
+        const selected = key === state.selectedDateKey ? " is-selected" : "";
+        return (
+          `<button type="button" class="cal-date-btn${selected}" data-date="${key}" ` +
+          `role="option" aria-selected="${key === state.selectedDateKey}">` +
+          `<span class="cal-date-weekday">${escapeHtml(parts.weekday)}</span>` +
+          `<span class="cal-date-day">${escapeHtml(parts.day)}</span>` +
+          `<span class="cal-date-count">${count} free</span>` +
+          `</button>`
+        );
+      })
+      .join("");
+
+    list.querySelectorAll(".cal-date-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectDate(btn.getAttribute("data-date"));
+      });
+    });
+
+    renderTimeList();
+  }
+
+  function selectDate(dateKey) {
+    state.selectedDateKey = dateKey;
+    state.selectedSlot = null;
+    renderDateList();
+    updateSelectedSummary();
+  }
+
+  function renderTimeList() {
+    const list = document.getElementById("time-list");
+    const heading = document.getElementById("time-heading");
+    const sub = document.getElementById("time-sub");
+    if (!list) return;
+
+    if (!state.selectedDateKey) {
+      list.innerHTML = '<p class="cal-times-empty">Pick a date to see times.</p>';
+      return;
+    }
+
+    const [y, m, d] = state.selectedDateKey.split("-").map(Number);
+    const date = new Date(y, m - 1, d);
+    if (heading) heading.textContent = "Time";
+    if (sub) {
+      sub.hidden = false;
+      sub.textContent =
+        formatLongDate(date) +
+        " · until end = start + " +
+        (CONFIG.slotDurationMinutes || 120) +
+        " min";
+    }
+
+    const slots = state.slotsByDay[state.selectedDateKey] || [];
+    if (!slots.length) {
+      list.innerHTML =
+        '<p class="cal-times-empty">No free starts on this day. Pick another date.</p>';
+      return;
+    }
+
+    list.innerHTML = slots
+      .map((s, i) => {
+        const startLabel = formatTime(s.start);
+        const endLabel = formatTime(s.end);
+        return (
+          `<button type="button" class="cal-time" data-slot-index="${i}" role="option">` +
+          `<span>${escapeHtml(startLabel)}</span>` +
+          `<span class="cal-time-end">until ${escapeHtml(endLabel)}</span>` +
+          `</button>`
+        );
+      })
+      .join("");
+
+    list.querySelectorAll(".cal-time").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.getAttribute("data-slot-index"));
+        const slot = slots[idx];
+        if (!slot) return;
+        openDetails(slot.start, slot.end);
+      });
+    });
+  }
+
+  function openDetails(start, end) {
+    const startDate = start instanceof Date ? start : new Date(start);
+    const endDate = end instanceof Date ? end : new Date(end);
+    state.selectedSlot = { start: startDate, end: endDate };
+    const slotEl = document.getElementById("modal-slot");
+    if (slotEl) slotEl.textContent = formatRange(startDate, endDate);
+    const form = document.getElementById("booking-form");
+    if (form) form.reset();
+    updateSelectedSummary();
+    showStep("details");
+    const name = document.getElementById("guest-name");
+    if (name) name.focus();
   }
 
   function renderUpcoming() {
     const list = document.getElementById("upcoming-list");
     const count = document.getElementById("booking-count");
+    if (!list) return;
+
     const upcoming = [...state.localBookings].sort(
       (a, b) => new Date(a.start) - new Date(b.start)
     );
-    count.textContent = upcoming.length ? `(${upcoming.length})` : "";
+    if (count) count.textContent = upcoming.length ? `(${upcoming.length})` : "";
 
     if (!upcoming.length) {
-      list.innerHTML =
-        '<p class="empty">No bookings yet. Pick a green slot to book a ' +
-        escapeHtml(bookingNoun()) +
-        ".</p>";
+      list.innerHTML = '<p class="empty">None yet on this device.</p>';
       return;
     }
 
     list.innerHTML = upcoming
       .map(
         (b) => `
-      <div class="booking-item" data-id="${b.id}">
+      <div class="booking-item" data-id="${escapeHtml(b.id)}">
         <strong>${escapeHtml(b.name)}</strong>
         <div class="meta">${escapeHtml(formatRange(new Date(b.start), new Date(b.end)))}</div>
         <div class="meta">${escapeHtml(b.email)}</div>
         <div class="actions">
-          <button type="button" data-cancel="${b.id}">Cancel</button>
+          <button type="button" data-cancel="${escapeHtml(b.id)}">Cancel</button>
         </div>
       </div>`
       )
@@ -633,39 +799,45 @@
 
     list.querySelectorAll("[data-cancel]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const cancelId = btn.getAttribute("data-cancel");
         btn.disabled = true;
-        Promise.resolve(cancelBooking(cancelId)).finally(() => {
-          // list is re-rendered; ignore if node is gone
-        });
+        cancelBooking(btn.getAttribute("data-cancel"));
       });
     });
   }
 
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+  function refreshUi() {
+    recomputeAvailability();
+    if (state.selectedDateKey && !(state.slotsByDay[state.selectedDateKey] || []).length) {
+      state.selectedDateKey = null;
+      if (state.step === "details") {
+        state.selectedSlot = null;
+        showStep("slots");
+      }
+    }
+    if (state.step === "slots" || state.step === "details") {
+      renderDateList();
+    }
+    if (state.selectedSlot && state.step === "details") {
+      const slotEl = document.getElementById("modal-slot");
+      if (slotEl) {
+        slotEl.textContent = formatRange(state.selectedSlot.start, state.selectedSlot.end);
+      }
+    }
+    updateSelectedSummary();
+    renderUpcoming();
   }
 
   async function cancelBooking(id) {
     const booking = state.localBookings.find((b) => b.id === id);
     if (!booking) {
-      const leftover = state.calendar?.getEventById(id);
-      if (leftover) leftover.remove();
       recomputeAvailability();
-      refreshCalendarEvents();
-      renderUpcoming();
+      refreshUi();
       return;
     }
 
-    // OAuth path: delete event from the guest's calendar if we created one
     if (booking.googleEventId && CONFIG.googleClientId) {
       try {
-        const token =
-          state.oauthToken || (await requestGoogleAccessToken());
+        const token = state.oauthToken || (await requestGoogleAccessToken());
         if (token) {
           state.oauthToken = token;
           await deleteEventWithOAuth(token, booking.googleEventId);
@@ -678,60 +850,8 @@
     state.localBookings = state.localBookings.filter((b) => b.id !== id);
     saveLocalBookings(state.localBookings);
     rememberCancelledBooking(booking);
-
-    if (state.calendar) {
-      state.calendar.getEvents().forEach((ev) => {
-        const kind = ev.extendedProps?.kind;
-        if (ev.id === id || ev.extendedProps?.booking?.id === id) {
-          ev.remove();
-          return;
-        }
-        if (
-          kind === "local" &&
-          timesMatch(ev.start.toISOString(), booking.start) &&
-          timesMatch(ev.end.toISOString(), booking.end)
-        ) {
-          ev.remove();
-          return;
-        }
-        if (
-          kind === "google" &&
-          isCancelledWebBookingEvent({
-            id: ev.id,
-            start: ev.start.toISOString(),
-            end: ev.end.toISOString(),
-            title: ev.title,
-            extendedProps: ev.extendedProps,
-          })
-        ) {
-          ev.remove();
-        }
-      });
-    }
-
-    recomputeAvailability();
-    refreshCalendarEvents();
-    renderUpcoming();
-    // Pull host calendar so other devices/guests see the free slot after cancel
     await syncCalendar();
-    toast("Booking cancelled — slot is free again for another " + bookingNoun(), "ok");
-  }
-
-  // ---------------------------------------------------------------------------
-  // Modal
-  // ---------------------------------------------------------------------------
-
-  function openModal(start, end) {
-    state.selectedSlot = { start, end };
-    document.getElementById("modal-slot").textContent = formatRange(start, end);
-    document.getElementById("booking-form").reset();
-    document.getElementById("booking-modal").classList.add("open");
-    document.getElementById("guest-name").focus();
-  }
-
-  function closeModal() {
-    state.selectedSlot = null;
-    document.getElementById("booking-modal").classList.remove("open");
+    toast("Booking cancelled — that start is free again", "ok");
   }
 
   async function submitBooking(e) {
@@ -749,13 +869,14 @@
     confirmBtn.textContent = "Checking…";
 
     try {
-      // Fresh calendar pull so we don't offer a slot that just filled
       await syncCalendar();
 
       const busy = getBusyIntervals(state.googleEvents, state.localBookings);
       if (!isSlotFree(start, end, busy)) {
         toast("That slot is no longer available. Please pick another.", "err");
-        closeModal();
+        state.selectedSlot = null;
+        showStep("slots");
+        renderDateList();
         return;
       }
 
@@ -771,9 +892,20 @@
 
       confirmBtn.textContent = "Booking…";
 
-      let mode = "local"; // local | oauth
+      let mode = "local";
 
-      if (CONFIG.googleClientId && CONFIG.googleClientId.trim()) {
+      if (CONFIG.bookingWebhookUrl && CONFIG.bookingWebhookUrl.trim()) {
+        try {
+          const created = await createEventWithWebhook(booking);
+          if (created.htmlLink) booking.htmlLink = created.htmlLink;
+          if (created.id) booking.googleEventId = created.id;
+          mode = "webhook";
+        } catch (whErr) {
+          console.error("Webhook booking failed:", whErr);
+          toast(whErr.message || "Could not save to calendar", "err");
+          return;
+        }
+      } else if (CONFIG.googleClientId && CONFIG.googleClientId.trim()) {
         try {
           const token = state.oauthToken || (await requestGoogleAccessToken());
           state.oauthToken = token;
@@ -787,7 +919,6 @@
         }
       }
 
-      // Clear cancel-suppress for this window so the new booking shows as busy
       state.cancelledSlots = (state.cancelledSlots || []).filter(
         (c) => !(timesMatch(c.start, booking.start) && timesMatch(c.end, booking.end))
       );
@@ -796,23 +927,36 @@
       state.localBookings.push(booking);
       saveLocalBookings(state.localBookings);
 
-      // Optimistic busy block so the slot cannot be re-clicked while GCal API catches up
-      if (mode === "oauth") {
+      if (mode === "webhook" || mode === "oauth") {
         injectOptimisticBusy(booking);
       }
 
       recomputeAvailability();
-      refreshCalendarEvents();
       renderUpcoming();
-      closeModal();
 
-      if (mode === "oauth") {
+      const successText = document.getElementById("success-text");
+      if (successText) {
+        successText.textContent =
+          formatRange(new Date(booking.start), new Date(booking.end)) +
+          " — confirmation details have been noted for " +
+          booking.email +
+          ".";
+      }
+      showStep("success");
+
+      if (mode === "webhook") {
+        toast("Booked! It's on our calendar.", "ok");
+        await syncCalendar();
+      } else if (mode === "oauth") {
         toast("Booked! Calendar invite sent.", "ok");
         await syncCalendar();
       } else {
         toast("Booked! Opening Google Calendar to save the event…", "ok");
         window.open(buildGoogleTemplateUrl(booking), "_blank", "noopener,noreferrer");
       }
+
+      state.selectedSlot = null;
+      state.selectedDateKey = null;
     } catch (err) {
       console.error(err);
       toast(err.message || "Booking failed", "err");
@@ -828,112 +972,38 @@
 
   async function syncCalendar() {
     setLoading(true);
-    const rangeStart = new Date();
-    rangeStart.setHours(0, 0, 0, 0);
+    const rangeStart = startOfDay(new Date());
     const rangeEnd = new Date(rangeStart);
-    rangeEnd.setDate(rangeEnd.getDate() + CONFIG.bookingWindowDays + 1);
+    rangeEnd.setDate(rangeEnd.getDate() + (CONFIG.bookingWindowDays || 28) + 1);
 
     try {
-      // Keep cancelled list in sync with storage (other tabs / long sessions)
       state.cancelledSlots = loadCancelledSlots();
 
       if (isLiveMode()) {
-        state.googleEvents = await fetchGoogleEvents(rangeStart, rangeEnd);
-        setStatus("live", "Synced with Google Calendar");
+        state.googleEvents = await fetchGoogleBusy(rangeStart, rangeEnd);
+        setStatus("live", "Live calendar");
         showBanner("");
       } else {
         state.googleEvents = buildDemoBusyEvents();
-        setStatus("demo", "Demo mode — add API key in config.js");
+        setStatus("demo", "Demo mode");
         showBanner(
-          "Demo mode: showing sample busy times. Set googleApiKey and calendarId in config.js for live sync."
+          "Demo mode: sample busy times. Add googleApiKey, calendarId, and bookingWebhookUrl in config.js to go live."
         );
       }
-      recomputeAvailability();
-      refreshCalendarEvents();
+      refreshUi();
     } catch (err) {
       console.error(err);
       setStatus("error", "Sync failed");
       showBanner(
         "Could not load Google Calendar: " +
           err.message +
-          " Using any local bookings only. Check API key, Calendar ID, and that the calendar is public."
+          " Showing any local bookings only."
       );
       state.googleEvents = [];
-      recomputeAvailability();
-      refreshCalendarEvents();
+      refreshUi();
     } finally {
       setLoading(false);
     }
-  }
-
-  // ---------------------------------------------------------------------------
-  // FullCalendar init
-  // ---------------------------------------------------------------------------
-
-  function initCalendar() {
-    const el = document.getElementById("calendar");
-    const { h: startH } = parseHHMM(CONFIG.businessHours.start);
-    const { h: endH, m: endM } = parseHHMM(CONFIG.businessHours.end);
-    // Show a little padding around business hours
-    const slotMin = pad(Math.max(0, startH - 1)) + ":00:00";
-    const slotMaxHour = endM > 0 ? endH + 1 : endH;
-    const slotMax = pad(Math.min(24, slotMaxHour + 1)) + ":00:00";
-
-    state.calendar = new FullCalendar.Calendar(el, {
-      initialView: window.matchMedia("(max-width: 700px)").matches
-        ? "timeGridDay"
-        : "timeGridWeek",
-      headerToolbar: {
-        left: "prev,next today",
-        center: "title",
-        right: "timeGridDay,timeGridWeek",
-      },
-      height: "auto",
-      allDaySlot: false,
-      nowIndicator: true,
-      slotMinTime: slotMin,
-      slotMaxTime: slotMax,
-      slotDuration: "00:30:00",
-      snapDuration: "00:" + pad(CONFIG.slotDurationMinutes) + ":00",
-      weekends: CONFIG.businessDays.includes(0) || CONFIG.businessDays.includes(6),
-      businessHours: {
-        daysOfWeek: CONFIG.businessDays,
-        startTime: CONFIG.businessHours.start,
-        endTime: CONFIG.businessHours.end,
-      },
-      selectable: false,
-      eventClick(info) {
-        const ev = info.event;
-        const kind = ev.extendedProps?.kind;
-        const classes = Array.isArray(ev.classNames)
-          ? ev.classNames
-          : [...(ev.classNames || [])];
-        if (kind === "available" || classes.includes("event-available")) {
-          openModal(ev.start, ev.end);
-          return;
-        }
-        if (kind === "google" || classes.includes("event-busy")) {
-          toast("That time is busy on the calendar.", "err");
-          return;
-        }
-        if (kind === "local" || classes.includes("event-pending")) {
-          toast("You already have a pending booking here.", "err");
-        }
-      },
-      eventDidMount(info) {
-        const names = info.event.classNames || [];
-        const list = Array.isArray(names) ? names : [...names];
-        if (list.includes("event-available") || info.event.extendedProps?.kind === "available") {
-          info.el.title = "Click to book this slot";
-        }
-      },
-      // Function source so cancel/book can refetch cleanly
-      events(fetchInfo, successCallback) {
-        successCallback(allCalendarEvents());
-      },
-    });
-
-    state.calendar.render();
   }
 
   // ---------------------------------------------------------------------------
@@ -941,27 +1011,71 @@
   // ---------------------------------------------------------------------------
 
   function applyBranding() {
-    document.title = CONFIG.businessName || "Book a Meeting";
-    document.getElementById("business-name").textContent =
-      CONFIG.businessName || "Book a Meeting";
-    document.getElementById("business-desc").textContent =
-      CONFIG.businessDescription || "";
-    document.getElementById("owner-line").textContent = CONFIG.ownerName
-      ? `Host: ${CONFIG.ownerName}${CONFIG.ownerEmail ? " · " + CONFIG.ownerEmail : ""}`
-      : "Host calendar synced for availability.";
+    const mins = CONFIG.slotDurationMinutes || 120;
+    const hours = mins >= 60 && mins % 60 === 0 ? mins / 60 : null;
+    const durationLabel = hours ? hours + (hours === 1 ? " hour" : " hours") : mins + " minutes";
+    const windowDays = CONFIG.bookingWindowDays || 28;
+
+    document.title = CONFIG.businessName || "Book a clean";
+    const name = document.getElementById("business-name");
+    const desc = document.getElementById("business-desc");
+    if (name) name.textContent = CONFIG.businessName || "Book a clean";
+    if (desc) {
+      desc.textContent =
+        CONFIG.businessDescription ||
+        "Choose a free start time. Each clean is " + durationLabel + ".";
+    }
+    const owner = document.getElementById("owner-line");
+    if (owner) {
+      owner.textContent = CONFIG.ownerName || "Tyneside Cleaning";
+    }
+    const metaDur = document.getElementById("meta-duration");
+    if (metaDur) metaDur.textContent = durationLabel;
+    const metaWin = document.getElementById("meta-window");
+    if (metaWin) metaWin.textContent = "Next " + windowDays + " days";
+    const winDays = document.getElementById("window-days");
+    if (winDays) winDays.textContent = String(windowDays);
   }
 
   function bindUi() {
-    document.getElementById("btn-refresh").addEventListener("click", () => {
-      syncCalendar().then(() => toast("Calendar refreshed", "ok"));
+    document.getElementById("btn-refresh")?.addEventListener("click", () => {
+      syncCalendar().then(() => toast("Times refreshed", "ok"));
     });
-    document.getElementById("btn-cancel").addEventListener("click", closeModal);
-    document.getElementById("booking-modal").addEventListener("click", (e) => {
-      if (e.target.id === "booking-modal") closeModal();
+
+    document.getElementById("btn-back-time")?.addEventListener("click", () => {
+      state.selectedSlot = null;
+      showStep("slots");
+      renderDateList();
     });
-    document.getElementById("booking-form").addEventListener("submit", submitBooking);
+
+    document.getElementById("btn-cancel")?.addEventListener("click", () => {
+      state.selectedSlot = null;
+      showStep("slots");
+      renderDateList();
+    });
+
+    document.getElementById("btn-change-slot")?.addEventListener("click", () => {
+      state.selectedSlot = null;
+      showStep("slots");
+      renderDateList();
+    });
+
+    document.getElementById("btn-book-another")?.addEventListener("click", () => {
+      state.selectedSlot = null;
+      state.selectedDateKey = null;
+      showStep("slots");
+      renderDateList();
+    });
+
+    document.getElementById("booking-form")?.addEventListener("submit", submitBooking);
+
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key !== "Escape") return;
+      if (state.step === "details") {
+        state.selectedSlot = null;
+        showStep("slots");
+        renderDateList();
+      }
     });
   }
 
@@ -971,15 +1085,10 @@
         "<p style='padding:2rem;font-family:sans-serif'>Missing config.js</p>";
       return;
     }
-    if (typeof FullCalendar === "undefined") {
-      document.body.innerHTML =
-        "<p style='padding:2rem;font-family:sans-serif'>Failed to load FullCalendar CDN.</p>";
-      return;
-    }
 
     applyBranding();
     bindUi();
-    initCalendar();
+    showStep("slots");
     renderUpcoming();
     await syncCalendar();
 
