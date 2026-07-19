@@ -1,25 +1,23 @@
 /**
  * Tyneside Cleaning — booking configuration
  *
- * Live mode needs:
- *   1. googleApiKey  — Google Cloud API key (Calendar API enabled)
- *   2. calendarId    — full calendar ID (email or …@group.calendar.google.com)
- *                      NOT the word "primary" (that only works when signed in)
- *   3. bookingWebhookUrl — Google Apps Script web-app URL (writes to YOUR calendar)
+ * Live mode: tyneside-api on Google Cloud Run
+ *   https://github.com/Tyneside-Software/tyneside-api
  *
- * Without an API key the page runs in demo mode with sample busy blocks.
- * See sites/cleaning/README.md for the click-by-click Google setup.
+ * Secrets (calendar ID, API keys, service account) live on Cloud Run only.
+ * This file only needs the public API base URL.
  */
 const CONFIG = {
-  // --- Google (fill these in) ---
-  googleApiKey: "AIzaSyChyxjxLGBzwB-Mm6aShlMOJK_RWaYT1PI",
-  calendarId: "REPLACE_WITH_CALENDAR_ID",
-  /** Apps Script web app URL — creates events on the host calendar. Preferred. */
+  // --- Backend (Cloud Run) ---
+  /** No trailing slash. Empty = demo mode with sample busy blocks. */
+  apiBaseUrl: "https://tyneside-api-git-975511976696.europe-west1.run.app",
+  /** Only if Cloud Run has API_KEY set — sent as X-Tyneside-Key. */
+  apiKey: "",
+
+  // Legacy direct-Google fields (unused when apiBaseUrl is set)
+  googleApiKey: "",
+  calendarId: "",
   bookingWebhookUrl: "",
-  /**
-   * Optional OAuth client ID. Only needed if you skip the Apps Script webhook;
-   * guests sign in and create an invite on their own calendar.
-   */
   googleClientId: "",
 
   ownerEmail: "michael@tyneside.software",
@@ -29,13 +27,9 @@ const CONFIG = {
     "Choose a free start time over the next 28 days. Each clean is 2 hours. Busy times from our calendar are blocked automatically.",
 
   // --- Slot rules (Calendly-style) ---
-  /** Length of each booking. */
   slotDurationMinutes: 120,
-  /** How often a clean can start (every N minutes). */
   slotStepMinutes: 10,
-  /** 0=Sun … 6=Sat — all seven days. */
   businessDays: [0, 1, 2, 3, 4, 5, 6],
-  /** Inclusive start; last start is end minus slotDuration. */
   businessHours: { start: "08:00", end: "18:00" },
   bookingWindowDays: 28,
   minNoticeHours: 24,

@@ -3,7 +3,8 @@
  * Pure client-side — GitHub Pages compatible.
  *
  * Flow: pick a day (next N days) → pick a start time → enter details → confirm
- * Busy: Google freeBusy · Write: Apps Script webhook → OAuth → template link
+ * Busy + write: tyneside-api (Cloud Run) → Google Calendar
+ * Fallbacks: direct freeBusy / Apps Script webhook / OAuth / template link
  */
 
 (function () {
@@ -314,11 +315,66 @@
     return events;
   }
 
+  function apiBase() {
+    return (CONFIG.apiBaseUrl || "").trim().replace(/\/$/, "");
+  }
+
+  function apiHeaders(json) {
+    const h = {};
+    if (json) h["Content-Type"] = "application/json";
+    if (CONFIG.apiKey && CONFIG.apiKey.trim()) {
+      h["X-Tyneside-Key"] = CONFIG.apiKey.trim();
+    }
+    return h;
+  }
+
   function isLiveMode() {
+    if (apiBase()) return true;
     return Boolean(CONFIG.googleApiKey && CONFIG.googleApiKey.trim());
   }
 
-  async function fetchGoogleBusy(timeMin, timeMax) {
+  function mapBusyBlocks(busy) {
+    return (busy || []).map((block, i) => {
+      const start = new Date(block.start);
+      const end = new Date(block.end);
+      return {
+        id: "busy-" + start.toISOString() + "-" + i,
+        title: "Busy",
+        start: start.toISOString(),
+        end: end.toISOString(),
+        extendedProps: {
+          kind: "google",
+          summary: "Busy",
+          description: "",
+          googleEventId: null,
+        },
+      };
+    });
+  }
+
+  async function fetchBusyViaApi(timeMin, timeMax) {
+    const base = apiBase();
+    const params = new URLSearchParams({
+      timeMin: timeMin.toISOString(),
+      timeMax: timeMax.toISOString(),
+      timeZone: tz(),
+    });
+    const res = await fetch(`${base}/v1/cleaning/busy?${params}`, {
+      method: "GET",
+      headers: apiHeaders(false),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) {
+      const detail =
+        (typeof data.detail === "string" && data.detail) ||
+        data.error ||
+        res.statusText;
+      throw new Error(detail || "Busy fetch failed (" + res.status + ")");
+    }
+    return mapBusyBlocks(data.busy);
+  }
+
+  async function fetchBusyViaGoogleDirect(timeMin, timeMax) {
     const calendarId = (CONFIG.calendarId || "").trim();
     if (!calendarId || calendarId === "primary" || calendarId === "REPLACE_WITH_CALENDAR_ID") {
       throw new Error(
@@ -362,17 +418,43 @@
       );
     }
 
-    return (cal.busy || []).map((block, i) => {
-      const start = new Date(block.start);
-      const end = new Date(block.end);
-      return {
-        id: "busy-" + start.toISOString() + "-" + i,
-        title: "Busy",
-        start: start.toISOString(),
-        end: end.toISOString(),
-        extendedProps: { kind: "google", summary: "Busy", description: "", googleEventId: null },
-      };
+    return mapBusyBlocks(cal.busy);
+  }
+
+  async function fetchGoogleBusy(timeMin, timeMax) {
+    if (apiBase()) return fetchBusyViaApi(timeMin, timeMax);
+    return fetchBusyViaGoogleDirect(timeMin, timeMax);
+  }
+
+  async function createEventWithApi(booking) {
+    const base = apiBase();
+    if (!base) throw new Error("apiBaseUrl not configured");
+
+    const res = await fetch(`${base}/v1/cleaning/bookings`, {
+      method: "POST",
+      headers: apiHeaders(true),
+      body: JSON.stringify({
+        id: booking.id,
+        name: booking.name,
+        email: booking.email,
+        notes: booking.notes || "",
+        start: booking.start,
+        end: booking.end,
+        summary: `${eventSummaryPrefix()} ${booking.name}`,
+        description: bookingDescription(booking),
+        timeZone: tz(),
+      }),
     });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) {
+      const detail =
+        (typeof data.detail === "string" && data.detail) ||
+        data.error ||
+        "Booking API failed (" + res.status + ")";
+      throw new Error(detail);
+    }
+    return { id: data.id || null, htmlLink: data.htmlLink || null };
   }
 
   function bookingDescription(booking) {
@@ -894,7 +976,18 @@
 
       let mode = "local";
 
-      if (CONFIG.bookingWebhookUrl && CONFIG.bookingWebhookUrl.trim()) {
+      if (apiBase()) {
+        try {
+          const created = await createEventWithApi(booking);
+          if (created.htmlLink) booking.htmlLink = created.htmlLink;
+          if (created.id) booking.googleEventId = created.id;
+          mode = "api";
+        } catch (apiErr) {
+          console.error("API booking failed:", apiErr);
+          toast(apiErr.message || "Could not save to calendar", "err");
+          return;
+        }
+      } else if (CONFIG.bookingWebhookUrl && CONFIG.bookingWebhookUrl.trim()) {
         try {
           const created = await createEventWithWebhook(booking);
           if (created.htmlLink) booking.htmlLink = created.htmlLink;
@@ -987,7 +1080,7 @@
         state.googleEvents = buildDemoBusyEvents();
         setStatus("demo", "Demo mode");
         showBanner(
-          "Demo mode: sample busy times. Add googleApiKey, calendarId, and bookingWebhookUrl in config.js to go live."
+          "Demo mode: sample busy times. Set apiBaseUrl in config.js to the Cloud Run API to go live."
         );
       }
       refreshUi();

@@ -17,7 +17,8 @@
  */
 
 /** Full calendar ID from Google Calendar → Settings → Integrate calendar. */
-var CALENDAR_ID = "REPLACE_WITH_CALENDAR_ID";
+var CALENDAR_ID =
+  "c_6d112612c74e5a29a004c4e3482bae849539e5c9787b02f2e28feec0439ddf57@group.calendar.google.com";
 
 function doPost(e) {
   try {
