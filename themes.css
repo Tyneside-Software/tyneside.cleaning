@@ -419,8 +419,115 @@
   box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.12), 0 8px 28px rgba(0, 0, 0, 0.3);
 }
 
+/* ========== LOGISTICS — routes / field ops / amber on slate ========== */
+.theme-logistics {
+  color-scheme: dark;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #0c1219;
+  --bg-fx: radial-gradient(900px 480px at 12% -10%, rgba(245, 158, 11, 0.16), transparent 55%),
+    radial-gradient(700px 400px at 100% 0%, rgba(14, 165, 233, 0.08), transparent 45%);
+  --text: #e8eef4;
+  --muted: #94a3b8;
+  --heading: #f8fafc;
+  --brand: #f8fafc;
+  --brand-muted: #fbbf24;
+  --brand-tracking: 0.02em;
+  --accent: #f59e0b;
+  --accent-soft: rgba(245, 158, 11, 0.14);
+  --link: #fcd34d;
+  --link-hover: #fde68a;
+  --label: #fbbf24;
+  --border: #2a3544;
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-lg: 14px;
+
+  --nav-bg: rgba(12, 18, 25, 0.92);
+  --nav-border: 1px solid #243041;
+  --nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+  --nav-blur: blur(10px);
+
+  --btn-border: 1px solid #f59e0b;
+  --btn-color: #fde68a;
+  --btn-bg: transparent;
+  --btn-bg-hover: rgba(245, 158, 11, 0.14);
+  --btn-color-hover: #fff;
+  --btn-shadow: none;
+  --btn-fill-border: 1px solid #d97706;
+  --btn-fill-color: #0c1219;
+  --btn-fill-bg: #f59e0b;
+  --btn-fill-bg-hover: #fbbf24;
+  --btn-fill-color-hover: #0c1219;
+  --btn-fill-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+  --btn-sec-border: 1px solid #475569;
+  --btn-sec-color: #e2e8f0;
+  --btn-sec-bg: transparent;
+  --btn-sec-bg-hover: rgba(148, 163, 184, 0.12);
+  --btn-sec-color-hover: #fff;
+
+  --hero-bg: linear-gradient(160deg, #1a1408 0%, #0c1219 50%, #0a1620 100%);
+  --hero-border: 1px solid #2a3544;
+  --hero-text: #e8eef4;
+  --hero-kicker: #fbbf24;
+  --hero-title: #f8fafc;
+  --hero-tag: #fcd34d;
+  --hero-lead: #94a3b8;
+  --hero-meta: #64748b;
+  --hero-title-tracking: -0.03em;
+
+  --section-alt-bg: rgba(26, 20, 8, 0.55);
+  --section-alt-border: 1px solid #2a3544;
+  --cta-bg: linear-gradient(180deg, #1c1508, #0c1219);
+  --cta-border: 1px solid #3d2e12;
+  --cta-text: #e8eef4;
+  --cta-heading: #f8fafc;
+  --cta-muted: #94a3b8;
+
+  --panel-bg: #121a24;
+  --panel-border: 1px solid #2a3544;
+  --panel-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+  --panel-heading: #fcd34d;
+  --panel-text: #94a3b8;
+  --panel-active-bg: #1c1508;
+  --panel-active-border: 1px solid #f59e0b;
+  --panel-active-shadow: 0 0 0 1px rgba(245, 158, 11, 0.22), 0 12px 32px rgba(0, 0, 0, 0.3);
+  --panel-active-heading: #fde68a;
+  --panel-active-text: #e2e8f0;
+
+  --chip-bg: #121a24;
+  --chip-border: 1px solid #2a3544;
+  --chip-text: #e2e8f0;
+
+  --quote-bg: #121a24;
+  --quote-border: 1px solid #2a3544;
+  --quote-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --quote-text: #cbd5e1;
+  --quote-cite: #fbbf24;
+
+  --step-bg: #121a24;
+  --step-border: 1px solid #2a3544;
+  --step-n-bg: #3d2e12;
+  --step-n-border: 1px solid #f59e0b;
+  --step-n-color: #fcd34d;
+
+  --footer-bg: #080c12;
+  --footer-border: 1px solid #2a3544;
+  --footer-text: #7a8699;
+  --footer-link: #a8b4c4;
+  --footer-link-active: #fcd34d;
+  --footer-link-bg: rgba(245, 158, 11, 0.12);
+}
+
+.theme-logistics .panel-m {
+  border-color: #3d2e12;
+}
+.theme-logistics .panel-c {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.12), 0 8px 28px rgba(0, 0, 0, 0.3);
+}
+
 /* ========== GROUP — portal that unites all brands ========== */
-/* Software blue · Cleaning teal · Charity rose · Technology amber · Games neon */
+/* Software blue · Cleaning teal · Charity rose · Technology amber · Games neon · Logistics amber */
 .theme-group {
   color-scheme: dark;
   --font: "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -659,6 +766,16 @@
   border-color: #00ff66;
 }
 
+.theme-group .portal-card.portal-logistics {
+  border-top-color: #f59e0b;
+}
+.theme-group .portal-card.portal-logistics .portal-kicker,
+.theme-group .portal-card.portal-logistics .portal-go { color: #fbbf24; }
+.theme-group .portal-card.portal-logistics:hover {
+  box-shadow: 0 18px 44px rgba(245, 158, 11, 0.28);
+  border-color: #f59e0b;
+}
+
 .theme-group .portal-strip {
   display: flex;
   flex-wrap: wrap;
@@ -689,6 +806,7 @@
 .theme-group .portal-pill.pill-charity { border-color: #e11d48; color: #fda4af; }
 .theme-group .portal-pill.pill-technology { border-color: #f59e0b; color: #fbbf24; }
 .theme-group .portal-pill.pill-games { border-color: #00ff66; color: #00ff66; }
+.theme-group .portal-pill.pill-logistics { border-color: #ea580c; color: #fdba74; }
 
 .theme-group .loop-row {
   display: grid;
