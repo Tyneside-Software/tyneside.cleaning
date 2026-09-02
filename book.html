@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book a clean · Tyneside Cleaning</title>
-  <meta name="description" content="Book a free cleaning slot. Live calendar sync — only available times are shown.">
+  <meta name="description" content="Book a £30 / 2-hour clean in Howden Ward by WhatsApp message.">
   <link rel="canonical" href="https://tyneside.cleaning/">
   <link rel="icon" href="logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="layout.css?v=20260810docs">
   <link rel="stylesheet" href="themes.css?v=20260810docs">
   <link rel="stylesheet" href="booking/booking.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="site theme-cleaning booking-page">
 
@@ -28,158 +27,121 @@
         <a href="https://tyneside.cleaning/"
            class="is-current"
 aria-current="page">CLEANING</a>
-        <a href="https://tyneside.charity/"
-           class=""
->CHARITY</a>
-        <a href="https://tyneside.group/"
-           class=""
->GROUP</a>
         <a href="https://tyneside.technology/"
            class=""
 >TECH</a>
         <a href="https://tyneside.games/"
            class=""
 >GAMES</a>
-        <a href="https://logistics.tyneside.software/"
+        <a href="https://tyneside.group/"
            class=""
->LOGISTICS</a>
+>GROUP</a>
     </div>
     <div class="nav-cta">
         <a class="btn btn-fill" href="book.html">Book a clean</a>
     </div>
   </div>
 </nav>
-  <div class="booking-wrap">
-    <div class="loading-bar" id="loading-bar"></div>
-    <div id="alert-banner" role="status"></div>
-
-    <div class="cal-shell" id="cal-shell">
-      <aside class="cal-event">
-        <p class="cal-kicker" id="owner-line">Tyneside Cleaning</p>
-        <h1 id="business-name">Book a clean</h1>
-        <p class="cal-desc" id="business-desc">
-          Choose a free start time. Each clean is 2 hours.
-        </p>
-
-        <ul class="cal-meta">
-          <li>
-            <span class="cal-meta-icon" aria-hidden="true">⏱</span>
-            <span id="meta-duration">2 hours</span>
-          </li>
-          <li>
-            <span class="cal-meta-icon" aria-hidden="true">📅</span>
-            <span id="meta-window">Next 28 days</span>
-          </li>
-          <li>
-            <span class="cal-meta-icon" aria-hidden="true">📍</span>
-            <span>Howden &amp; North Tyneside</span>
-          </li>
-        </ul>
-
-        <div class="cal-selected" id="selected-summary" hidden>
-          <p class="cal-selected-label">Your selection</p>
-          <p class="cal-selected-value" id="selected-summary-text"></p>
-          <button type="button" class="cal-link-btn" id="btn-change-slot">Change</button>
-        </div>
-
-        <div class="cal-event-foot">
-          <div class="status-pill demo" id="sync-status" title="Calendar sync status">
-            <span class="dot" aria-hidden="true"></span>
-            <span id="sync-status-text">Loading…</span>
-          </div>
-          <button type="button" class="cal-link-btn" id="btn-refresh">Refresh times</button>
-        </div>
-
-        <div class="cal-yours" id="yours-block">
-          <h2>Your bookings <span id="booking-count"></span></h2>
-          <div id="upcoming-list">
-            <p class="empty">None yet on this device.</p>
-          </div>
-        </div>
-
-        <p class="cal-whatsapp">
-          Prefer message?
-          <a href="https://wa.me/447411949215" rel="noopener" target="_blank">WhatsApp us</a>
-        </p>
-      </aside>
-
-      <section class="cal-panel">
-        <div class="cal-step" id="step-slots" data-step="slots">
-          <header class="cal-step-head">
-            <h2>Select a time</h2>
-            <p class="cal-step-sub">
-              Free starts over the next <span id="window-days">28</span> days ·
-              each clean lasts 2 hours
-            </p>
-          </header>
-
-          <div class="cal-picker">
-            <div class="cal-picker-dates">
-              <p class="cal-picker-label">Date</p>
-              <div class="cal-date-list" id="date-list" role="listbox" aria-label="Available dates"></div>
-            </div>
-            <div class="cal-picker-times">
-              <p class="cal-picker-label" id="time-heading">Time</p>
-              <p class="cal-step-sub" id="time-sub" hidden></p>
-              <div class="cal-times" id="time-list" role="listbox" aria-label="Available start times"></div>
-            </div>
-          </div>
-
-          <p class="cal-hint" id="slots-hint">
-            Only free start times are shown. Busy periods from our calendar are hidden.
-          </p>
-        </div>
-
-        <div class="cal-step" id="step-details" data-step="details" hidden>
-          <header class="cal-step-head">
-            <button type="button" class="cal-back" id="btn-back-time">← Times</button>
-            <h2>Enter details</h2>
-            <p class="cal-step-sub slot-label" id="modal-slot"></p>
-          </header>
-          <form id="booking-form" class="cal-form">
-            <div class="field">
-              <label for="guest-name">Your name</label>
-              <input id="guest-name" name="name" type="text" required autocomplete="name" placeholder="Jane Smith" />
-            </div>
-            <div class="field">
-              <label for="guest-email">Email</label>
-              <input id="guest-email" name="email" type="email" required autocomplete="email" placeholder="jane@example.com" />
-            </div>
-            <div class="field">
-              <label for="guest-notes">Address &amp; notes (optional)</label>
-              <textarea id="guest-notes" name="notes" placeholder="Postcode, property type, access notes, deep clean vs regular…"></textarea>
-            </div>
-            <div class="cal-form-actions">
-              <button type="button" class="btn btn-ghost" id="btn-cancel">Back</button>
-              <button type="submit" class="btn btn-fill" id="btn-confirm">Confirm clean</button>
-            </div>
-          </form>
-        </div>
-
-        <div class="cal-step cal-success" id="step-success" data-step="success" hidden>
-          <div class="cal-success-icon" aria-hidden="true">✓</div>
-          <h2>You're booked</h2>
-          <p class="cal-step-sub" id="success-text"></p>
-          <button type="button" class="btn btn-fill" id="btn-book-another">Book another clean</button>
-        </div>
-      </section>
+  <header class="hero">
+    <div class="wrap">
+      <p class="hero-kicker">Howden Ward · £30 for 2 hours</p>
+      <h1>BOOK A<br>CLEAN</h1>
+      <p class="hero-tag">
+        Booking is by WhatsApp message.<br>
+        We reply, confirm a time, and send a cleaner.
+      </p>
+      <p class="hero-lead">
+        Two-hour domestic pack at <strong>£30</strong> — the market sweet spot.
+        Every pound goes to cleaner fees. First area: <strong>Howden Ward</strong>,
+        based at Howden Community Hub.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-fill btn-lg" id="wa-book"
+           href="https://wa.me/447411949215?text=Hi%2C%20I%27d%20like%20to%20book%20a%20%C2%A330%20/%202-hour%20clean%20with%20Tyneside%20Cleaning%20in%20Howden%20Ward."
+           data-phone="447411949215"
+           rel="noopener" target="_blank">
+          Book on WhatsApp
+        </a>
+        <a class="btn btn-secondary btn-lg" href="index.html">Back to Tyneside Cleaning</a>
+      </div>
+      <p class="hero-meta">
+        Opens WhatsApp to +44 7411 949215. That’s the whole booking system.
+      </p>
     </div>
-  </div>
+  </header>
 
-  <div class="toast" id="toast" role="status"></div>
+  <section class="section" id="details">
+    <div class="wrap">
+      <h2>Add a few details if you like</h2>
+      <p class="lede">
+        Optional — they go into the WhatsApp message so we can reply with a time.
+        Or skip this and tap <strong>Book on WhatsApp</strong> above.
+      </p>
+      <form id="wa-form" class="wa-form panel" action="https://wa.me/447411949215" method="get">
+        <div class="field">
+          <label for="guest-name">Your name</label>
+          <input id="guest-name" name="name" type="text" autocomplete="name" placeholder="Jane Smith">
+        </div>
+        <div class="field">
+          <label for="guest-area">Postcode or area</label>
+          <input id="guest-area" name="area" type="text" autocomplete="postal-code" placeholder="NE28… or Howden">
+        </div>
+        <div class="field">
+          <label for="guest-when">Preferred day or time</label>
+          <input id="guest-when" name="when" type="text" placeholder="Tuesday morning, after 4pm, this weekend…">
+        </div>
+        <div class="field">
+          <label for="guest-notes">Notes</label>
+          <textarea id="guest-notes" name="notes" rows="3" placeholder="Access, pets, regular vs one-off, anything useful"></textarea>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-fill btn-lg">Send booking on WhatsApp</button>
+        </div>
+        <p class="hero-meta" style="margin-top:0.85rem">
+          No account, no calendar widget, no email form that goes nowhere.
+          The message opens in WhatsApp and we pick it up there.
+        </p>
+      </form>
+    </div>
+  </section>
 
-  <script src="booking/config.js"></script>
+  <section class="section section-alt" id="how">
+    <div class="wrap">
+      <h2>How a booking works</h2>
+      <ol class="steps">
+        <li>
+          <span class="n">1</span>
+          <div>
+            <h3>Message us</h3>
+            <p>WhatsApp with the pack you want (£30 / 2 hours) and where you are.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">2</span>
+          <div>
+            <h3>We confirm a time</h3>
+            <p>We reply on WhatsApp with a slot that works for a cleaner.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">3</span>
+          <div>
+            <h3>The clean happens</h3>
+            <p>Two hours on the doorstep. All of the £30 goes to cleaner fees.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
   <script src="booking/app.js"></script>
 
 <footer class="site-footer">
   <div class="footer-brands">
       <a href="https://tyneside.software/" class="">SOFTWARE</a>
       <a href="https://tyneside.cleaning/" class="is-current">CLEANING</a>
-      <a href="https://tyneside.charity/" class="">CHARITY</a>
-      <a href="https://tyneside.group/" class="">GROUP</a>
       <a href="https://tyneside.technology/" class="">TECH</a>
       <a href="https://tyneside.games/" class="">GAMES</a>
-      <a href="https://logistics.tyneside.software/" class="">LOGISTICS</a>
+      <a href="https://tyneside.group/" class="">GROUP</a>
   </div>
   <p class="legal">
     Tyneside Software Ltd • Based at <strong>Howden Community Hub</strong>, North Tyneside<br>
